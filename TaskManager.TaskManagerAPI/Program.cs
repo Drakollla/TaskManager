@@ -1,5 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using Repository;
+using TaskManagerAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,13 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-var connectionString = builder.Configuration.GetConnectionString("sqlConnection");
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString,
-        b => b.MigrationsAssembly("Repository")));
-
+builder.Services.ConfigureCors();
+builder.Services.ConfigureSqlContext(builder.Configuration); // База
+builder.Services.ConfigureRepositoryManager();
 
 var app = builder.Build();
 
@@ -30,6 +25,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
