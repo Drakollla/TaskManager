@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
+builder.Services.ConfigureMediatR();
+builder.Services.ConfigureAutoMapper();
 
 var app = builder.Build();
 
