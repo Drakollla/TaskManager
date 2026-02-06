@@ -6,10 +6,8 @@ namespace Repository
 {
     public class WorkTaskRepository : RepositoryBase<WorkTask>, IWorkTaskRepository
     {
-        public WorkTaskRepository(AppDbContext appDbContext) 
-            : base(appDbContext)
-        {
-        }
+        public WorkTaskRepository(AppDbContext appDbContext)
+            : base(appDbContext) { }
 
         public void CreateTask(WorkTask task) => Create(task);
 
@@ -20,8 +18,21 @@ namespace Repository
                 .OrderBy(t => t.Title)
                 .ToListAsync();
 
+        public async Task<IEnumerable<WorkTask>> GetTaskByCategoryIdAsync(Guid categoryId, bool trackChanges) =>
+            await FindByCondition(x => x.CategoryId.Equals(categoryId), trackChanges)
+                .OrderBy(x => x.DueDate)
+                .ToListAsync();
+
         public async Task<WorkTask?> GetTaskByIdAsync(Guid id, bool trackChanges) =>
             await FindByCondition(t => t.Id.Equals(id), trackChanges)
-            .SingleOrDefaultAsync();
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .AsSplitQuery()
+                .SingleOrDefaultAsync();
+
+        public async Task<IEnumerable<WorkTask>> GetTaskByTagIdAsync(Guid tagId, bool trackChanges) =>
+            await FindByCondition(x => x.Tags.Any(tag => tag.Id == tagId), trackChanges)
+                .OrderBy(x => x.DueDate)
+                .ToListAsync();
     }
 }
