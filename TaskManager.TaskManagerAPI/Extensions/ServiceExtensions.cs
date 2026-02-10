@@ -1,4 +1,6 @@
-﻿using Domain.Contracts;
+﻿using Application.Behaviors;
+using Domain.Contracts;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 
@@ -26,8 +28,19 @@ namespace TaskManagerAPI.Extensions
 
         }
 
-        public static void ConfigureMediatR(this IServiceCollection services) =>
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Application.AssemblyReference).Assembly));
+        public static void ConfigureMediatR(this IServiceCollection services)
+        {
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(Application.AssemblyReference).Assembly);
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
+        }
+
+        public static void ConfigureValidators(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssembly(typeof(Application.AssemblyReference).Assembly);
+        }
 
         public static void ConfigureAutoMapper(this IServiceCollection services) =>
             services.AddAutoMapper(typeof(Application.Mapping.MappingProfile));
