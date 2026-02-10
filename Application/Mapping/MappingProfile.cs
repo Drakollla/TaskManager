@@ -17,6 +17,9 @@ namespace Application.Mapping
             CreateMap<WorkTask, WorkTaskDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(t => t.Name).ToList()));
+
+            //CreateMap<Tag, TagDto>();
+            CreateMap<CreateTagDto, Tag>();
         }
     }
 }
