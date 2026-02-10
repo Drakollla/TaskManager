@@ -1,6 +1,7 @@
 ﻿using Application.Features.WorkTasks.Commands;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.Exceptions;
 using MediatR;
 using TaskManager.Domain.Models;
 
@@ -24,7 +25,7 @@ namespace Application.Features.WorkTasks.Handlers
             var category = await _repository.Category.GetCategoryByIdAsync(dto.CategoryId, trackChanges: false);
 
             if (category is null)
-                throw new Exception($"Category with id {dto.CategoryId} not found");
+                throw new CategoryNotFoundException(dto.CategoryId);
 
             var taskEntity = _mapper.Map<WorkTask>(dto);
 
@@ -35,7 +36,6 @@ namespace Application.Features.WorkTasks.Handlers
                 taskEntity.Tags = tags.ToList();
             }
 
-            // 4. Сохраняем
             _repository.Task.CreateTask(taskEntity);
             await _repository.SaveAsync();
 
