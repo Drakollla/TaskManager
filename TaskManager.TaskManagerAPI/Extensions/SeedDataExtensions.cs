@@ -17,10 +17,10 @@ namespace TaskManagerAPI.Extensions
                 {
                     var context = services.GetRequiredService<AppDbContext>();
 
-                    //await context.Database.MigrateAsync();
+                    await context.Database.MigrateAsync();
 
-                    //if (await context.Categories.AnyAsync())
-                    //    return;
+                    if (await context.Categories.AnyAsync())
+                        return;
 
                     var workCat = new Category { Id = Guid.NewGuid(), Name = "Работа" };
                     var homeCat = new Category { Id = Guid.NewGuid(), Name = "Личное" };
