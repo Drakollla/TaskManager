@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Repository.Configuration;
 using TaskManager.Domain.Models;
 using TaskManager.Repository.Configuration;
 
@@ -13,6 +14,8 @@ namespace Repository
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new WorkTaskConfiguration());
+            modelBuilder.ApplyConfiguration(new TagConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         }
 
         public DbSet<Category> Categories { get; set; }

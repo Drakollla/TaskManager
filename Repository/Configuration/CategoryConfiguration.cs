@@ -1,0 +1,28 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TaskManager.Domain.Models;
+
+namespace Repository.Configuration
+{
+    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    {
+        public void Configure(EntityTypeBuilder<Category> builder)
+        {
+            builder.ToTable("Categories");
+
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(60);
+
+            builder.HasIndex(c => c.Name)
+                .IsUnique();
+
+            builder.HasMany(c => c.Tasks)
+                .WithOne(t => t.Category)
+                .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+}
