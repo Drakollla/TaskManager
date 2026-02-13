@@ -32,7 +32,7 @@ namespace TaskManagerAPI.Extensions
                     var urgentTag = new Tag { Id = Guid.NewGuid(), Name = "Срочно", ColorHex = "#FF0000" };
                     var bugTag = new Tag { Id = Guid.NewGuid(), Name = "Баг", ColorHex = "#FFA500" };
                     var featureTag = new Tag { Id = Guid.NewGuid(), Name = "Фича", ColorHex = "#0000FF" };
-                    var ideaTag = new Tag { Id = Guid.NewGuid(), Name = "Идея", ColorHex = "#008000" };   
+                    var ideaTag = new Tag { Id = Guid.NewGuid(), Name = "Идея", ColorHex = "#008000" };
                     var laterTag = new Tag { Id = Guid.NewGuid(), Name = "Потом", ColorHex = "#808080" };
 
                     await context.Tags.AddRangeAsync(urgentTag, bugTag, featureTag, ideaTag, laterTag);
