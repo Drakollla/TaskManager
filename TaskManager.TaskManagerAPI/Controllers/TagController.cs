@@ -21,5 +21,19 @@ namespace TaskManagerAPI.Controllers
 
             return Ok(new { Id = tagId });
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateTag(Guid id, [FromBody] UpdateTagDto dto)
+        {
+            await _sender.Send(new UpdateTagCommand(id, dto));
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTag(Guid id)
+        {
+            await _sender.Send(new DeleteTagCommand(id));
+            return NoContent();
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace Application.Mapping
 
             CreateMap<CreateTagDto, Tag>();
             CreateMap<Tag, TagDto>();
+            CreateMap<UpdateTagDto, Tag>();
         }
     }
 }
