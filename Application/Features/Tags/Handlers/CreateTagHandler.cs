@@ -1,6 +1,7 @@
 ﻿using Application.Features.Tags.Commands;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.Exceptions;
 using MediatR;
 using TaskManager.Domain.Models;
 
@@ -19,6 +20,11 @@ namespace Application.Features.Tags.Handlers
 
         public async Task<Guid> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
+            var existingTag = await _repository.Tag.GetTagByNameAsync(request.CreateTagDto.Name, trackChanges: false);
+
+            if (existingTag != null)
+                throw new TagAlreadyExistsException(existingTag.Name);
+
             var tagEntity = _mapper.Map<Tag>(request.CreateTagDto);
 
             _repository.Tag.CreateTag(tagEntity);

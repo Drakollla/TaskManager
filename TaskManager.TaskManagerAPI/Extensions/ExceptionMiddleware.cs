@@ -40,7 +40,6 @@ namespace TaskManagerAPI.Extensions
                     statusCode = (int)HttpStatusCode.BadRequest;
                     message = string.Join("; ", validationEx.Errors.Select(x => x.ErrorMessage));
                     break;
-
                 case NotFoundException:
                     statusCode = (int)HttpStatusCode.NotFound;
                     message = exception.Message;

@@ -21,5 +21,9 @@ namespace Repository
         public async Task<Category?> GetCategoryByIdAsync(Guid id, bool trackChanges) =>
             await FindByCondition(x => x.Id.Equals(id), trackChanges)
                 .SingleOrDefaultAsync();
+
+        public async Task<Category?> GetCategoryByNameAsync(string name, bool trackChanges) =>
+            await FindByCondition(c => c.Name.ToLower() == name.ToLower(), trackChanges)
+                .SingleOrDefaultAsync();
     }
 }
