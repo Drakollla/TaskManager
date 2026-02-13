@@ -10,6 +10,7 @@ namespace Application.Mapping
         {
             CreateMap<Category, CategoryDto>();
             CreateMap<CreateCategoryDto, Category>();
+            CreateMap<UpdateCategoryDto, Category>();
 
             CreateMap<CreateWorkTaskDto, WorkTask>()
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
@@ -17,15 +18,10 @@ namespace Application.Mapping
             CreateMap<WorkTask, WorkTaskDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : "Без категории"));
-            //.ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(t => t.Name).ToList()));
-
-            //.ForMember(dest => dest.Tags, opt => opt.MapFrom(src =>
-            //   src.Tags.Select(t => t.Name).ToList()));
 
             CreateMap<UpdateWorkTaskDto, WorkTask>()
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
 
-            //CreateMap<Tag, TagDto>();
             CreateMap<CreateTagDto, Tag>();
             CreateMap<Tag, TagDto>();
         }

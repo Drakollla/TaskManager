@@ -25,8 +25,7 @@ namespace TaskManagerAPI.Controllers
         [HttpGet("{id:guid}", Name = "CategoryById")]
         public async Task<IActionResult> GetCategory(Guid id)
         {
-            var query = new GetCategoryByIdQuery(id, TrackChanges: false);
-            var category = await _sender.Send(query);
+            var category = await _sender.Send(new GetCategoryByIdQuery(id, TrackChanges: false));
 
             if (category is null)
                 return NotFound();
@@ -40,10 +39,23 @@ namespace TaskManagerAPI.Controllers
             if (createCategoryDto is null)
                 return BadRequest("CategoryDto object is null");
 
-            var command = new CreateCategoryCommand(createCategoryDto);
-            var createdCategoryId = await _sender.Send(command);
+            var createdCategoryId = await _sender.Send(new CreateCategoryCommand(createCategoryDto));
 
             return CreatedAtRoute("CategoryById", new { id = createdCategoryId }, new { id = createdCategoryId });
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryDto dto)
+        {
+            await _sender.Send(new UpdateCategoryCommand(id, dto));
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCategory(Guid id)
+        {
+            await _sender.Send(new DeleteCategoryCommand(id));
+            return NoContent();
         }
     }
 }
