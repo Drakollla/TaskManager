@@ -45,6 +45,10 @@ namespace TaskManagerAPI.Extensions
                     statusCode = (int)HttpStatusCode.NotFound;
                     message = exception.Message;
                     break;
+                case BadRequestException badRequestEx:
+                    statusCode = (int)HttpStatusCode.BadRequest;
+                    message = badRequestEx.Message;
+                    break;
 
                 default:
                     message = exception.Message;

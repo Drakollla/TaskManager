@@ -7,7 +7,7 @@ namespace Application.Features.Tags.Commands
         public CreateTagCommandValidator()
         {
             RuleFor(x => x.CreateTagDto.Name)
-                .Empty()
+                .NotEmpty()
                 .MaximumLength(50);
 
             RuleFor(x => x.CreateTagDto.ColorHex)

@@ -15,7 +15,11 @@ namespace Repository
 
         public async Task<IEnumerable<WorkTask>> GetAllTasksAsync(bool trackChanges) =>
             await FindAll(trackChanges)
-                .OrderBy(t => t.Title)
+                .Include(t => t.Category)
+                .Include(t => t.Tags)
+                .OrderBy(t => t.DueDate)
+                .ThenBy(t => t.Title)
+                .AsNoTracking()
                 .ToListAsync();
 
         public async Task<IEnumerable<WorkTask>> GetTaskByCategoryIdAsync(Guid categoryId, bool trackChanges) =>

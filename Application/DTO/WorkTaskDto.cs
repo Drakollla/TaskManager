@@ -9,6 +9,6 @@
         string Priority,
         string Status,
         string CategoryName,
-        List<string> Tags
+        List<TagDto> Tags
     );
 }

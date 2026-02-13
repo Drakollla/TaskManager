@@ -35,4 +35,6 @@ app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
+//await app.SeedDataAsync();
+
 app.Run();
