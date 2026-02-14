@@ -4,6 +4,7 @@ using Application.Features.WorkTasks.Quaries;
 using Domain.RequestFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace TaskManagerAPI.Controllers
 {
@@ -21,9 +22,11 @@ namespace TaskManagerAPI.Controllers
             if (!parameters.ValidDateRange)
                 return BadRequest("MaxDate cannot be less than MinDate");
 
-            var tasks = await _sender.Send(new GetWorkTasksQuery(parameters, TrackChanges: false));
+            var result = await _sender.Send(new GetWorkTasksQuery(parameters, TrackChanges: false));
+            
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData));
 
-            return Ok(tasks);
+            return Ok(result.tasks);
         }
 
         [HttpGet("{id:guid}", Name = "GetTaskById")]

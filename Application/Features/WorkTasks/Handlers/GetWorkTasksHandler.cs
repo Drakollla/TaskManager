@@ -2,11 +2,12 @@
 using Application.Features.WorkTasks.Quaries;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.RequestFeatures;
 using MediatR;
 
 namespace Application.Features.WorkTasks.Handlers
 {
-    public class GetWorkTasksHandler : IRequestHandler<GetWorkTasksQuery, IEnumerable<WorkTaskDto>>
+    public class GetWorkTasksHandler : IRequestHandler<GetWorkTasksQuery, (IEnumerable<WorkTaskDto> tasks, MetaData metaData)>
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
@@ -17,12 +18,12 @@ namespace Application.Features.WorkTasks.Handlers
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<WorkTaskDto>> Handle(GetWorkTasksQuery request, CancellationToken cancellationToken)
+        public async Task<(IEnumerable<WorkTaskDto> tasks, MetaData metaData)> Handle(GetWorkTasksQuery request, CancellationToken cancellationToken)
         {
-            var tasks = await _repository.Task.GetAllTasksAsync(request.TrackChanges);
-            var tasksDto = _mapper.Map<IEnumerable<WorkTaskDto>>(tasks);
+            var tasksWithMetadata = await _repository.Task.GetAllTasksAsync(request.Parameters, request.TrackChanges);
+            var tasksDto = _mapper.Map<IEnumerable<WorkTaskDto>>(tasksWithMetadata);
 
-            return tasksDto;
+            return (tasksDto, tasksWithMetadata.MetaData);
         }
     }
 }

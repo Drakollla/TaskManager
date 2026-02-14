@@ -1,5 +1,7 @@
 ﻿using Domain.Contracts;
+using Domain.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using TaskManager.Domain.Models;
 
 namespace Repository
@@ -13,14 +15,19 @@ namespace Repository
 
         public void DeleteTask(WorkTask task) => Delete(task);
 
-        public async Task<IEnumerable<WorkTask>> GetAllTasksAsync(bool trackChanges) =>
-            await FindAll(trackChanges)
+        public async Task<PagedList<WorkTask>> GetAllTasksAsync(WorkTaskParameters parameters, bool trackChanges)
+        {
+            var tasksQuery = FindAll(trackChanges)
+                .FilterWorkTasks(parameters.MinDate, parameters.MaxDate)
+                .Search(parameters.SearchTerm)
                 .Include(t => t.Category)
                 .Include(t => t.Tags)
                 .OrderBy(t => t.DueDate)
                 .ThenBy(t => t.Title)
-                .AsNoTracking()
-                .ToListAsync();
+                .AsNoTracking();
+
+            return await tasksQuery.ToPagedListAsync(parameters.PageNumber, parameters.PageSize);
+        }
 
         public async Task<IEnumerable<WorkTask>> GetTaskByCategoryIdAsync(Guid categoryId, bool trackChanges) =>
             await FindByCondition(x => x.CategoryId.Equals(categoryId), trackChanges)
