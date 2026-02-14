@@ -38,7 +38,7 @@ namespace TaskManagerAPI.Controllers
             var command = new CreateTagCommand(dto);
             var tagId = await _sender.Send(command);
 
-            return Ok(new { Id = tagId });
+            return CreatedAtRoute("GetTagById", new { id = tagId }, tagId);
         }
 
         [HttpPut("{id:guid}")]

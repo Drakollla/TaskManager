@@ -21,19 +21,25 @@ namespace TaskManagerAPI.Controllers
             if (!parameters.ValidDateRange)
                 return BadRequest("MaxDate cannot be less than MinDate");
 
-            var query = new GetWorkTasksQuery(parameters, TrackChanges: false);
-            var tasks = await _sender.Send(query);
+            var tasks = await _sender.Send(new GetWorkTasksQuery(parameters, TrackChanges: false));
 
             return Ok(tasks);
+        }
+
+        [HttpGet("{id:guid}", Name = "GetTaskById")]
+        public async Task<IActionResult> GetTask(Guid id)
+        {
+            var task = await _sender.Send(new GetWorkTaskByIdQuery(id, TrackChanges: false));
+
+            return Ok(task);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] CreateWorkTaskDto dto)
         {
-            var command = new CreateWorkTaskCommand(dto);
-            var taskId = await _sender.Send(command);
+            var taskId = await _sender.Send(new CreateWorkTaskCommand(dto));
 
-            return Ok(new { Id = taskId });
+            return CreatedAtRoute("GetTaskById", new { id = taskId }, taskId);
         }
 
         [HttpPut("{id:guid}")]
@@ -42,8 +48,7 @@ namespace TaskManagerAPI.Controllers
             if (updateDto is null)
                 return BadRequest("UpdateDto is null");
 
-            var command = new UpdateWorkTaskCommand(id, updateDto);
-            await _sender.Send(command);
+            await _sender.Send(new UpdateWorkTaskCommand(id, updateDto));
 
             return NoContent();
         }
@@ -51,8 +56,7 @@ namespace TaskManagerAPI.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteTask(Guid id)
         {
-            var command = new DeleteWorkTaskCommand(id);
-            await _sender.Send(command);
+            await _sender.Send(new DeleteWorkTaskCommand(id));
 
             return NoContent();
         }
