@@ -2,6 +2,7 @@
 using Application.Features.Categories.Queries;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.Exceptions;
 using MediatR;
 
 namespace Application.Features.Categories.Handlers
@@ -21,9 +22,8 @@ namespace Application.Features.Categories.Handlers
         {
             var category = await _repository.Category.GetCategoryByIdAsync(request.Id, request.TrackChanges);
 
-            // TODO: обработать ошибки позже
             if (category is null)
-                return null;
+                throw new CategoryNotFoundException(request.Id);
 
             return _mapper.Map<CategoryDto>(category);
         }

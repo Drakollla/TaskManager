@@ -2,6 +2,7 @@
 using Application.Features.Tags.Quaries;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.Exceptions;
 using MediatR;
 
 namespace Application.Features.Tags.Handlers
@@ -21,9 +22,8 @@ namespace Application.Features.Tags.Handlers
         {
             var tag = await _repository.Tag.GetTagByIdAsync(request.Id, request.TrackChanges);
 
-            // TODO: обработать ошибки позже
             if (tag is null)
-                return null;
+               throw new TagNotFoundException(request.Id);
 
             return _mapper.Map<TagDto>(tag);
         }
