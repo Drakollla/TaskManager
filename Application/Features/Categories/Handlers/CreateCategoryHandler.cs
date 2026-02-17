@@ -20,12 +20,13 @@ namespace Application.Features.Categories.Handlers
 
         public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var existingCategory = await _repository.Category.GetCategoryByNameAsync(request.CreateCategoryDto.Name, trackChanges: false);
+            var existingCategory = await _repository.Category.GetCategoryByNameAsync(request.CreateCategoryDto.Name, request.UserId, trackChanges: false);
 
             if (existingCategory != null)
                 throw new CategoryAlreadyExistsException(existingCategory.Name);
 
             var categoryEntity = _mapper.Map<Category>(request.CreateCategoryDto);
+            categoryEntity.UserId = request.UserId;
 
             _repository.Category.CreateCategory(categoryEntity);
 

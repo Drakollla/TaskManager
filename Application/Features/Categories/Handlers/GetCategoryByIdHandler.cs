@@ -20,7 +20,7 @@ namespace Application.Features.Categories.Handlers
 
         public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var category = await _repository.Category.GetCategoryByIdAsync(request.Id, request.TrackChanges);
+            var category = await _repository.Category.GetCategoryByIdAsync(request.Id, request.UserId, request.TrackChanges);
 
             if (category is null)
                 throw new CategoryNotFoundException(request.Id);

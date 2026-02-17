@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
+using TaskManagerAPI.Extensions;
 
 namespace TaskManagerAPI.Controllers
 {
@@ -19,14 +20,16 @@ namespace TaskManagerAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTags()
         {
-            var tags = await _sender.Send(new GetAllTagsQuery(TrackChanges: false));
+            var userId = User.GetUserId();
+            var tags = await _sender.Send(new GetAllTagsQuery(userId, TrackChanges: false));
             return Ok(tags);
         }
 
         [HttpGet("{id:guid}", Name = "TagById")]
         public async Task<IActionResult> GetTag(Guid id)
         {
-            var tag = await _sender.Send(new GetTagByIdQuery(id, TrackChanges: false));
+            var userId = User.GetUserId();
+            var tag = await _sender.Send(new GetTagByIdQuery(id, userId, TrackChanges: false));
 
             if (tag is null)
                 return NotFound();
@@ -37,8 +40,8 @@ namespace TaskManagerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagDto dto)
         {
-            var command = new CreateTagCommand(dto);
-            var tagId = await _sender.Send(command);
+            var userId = User.GetUserId();
+            var tagId = await _sender.Send(new CreateTagCommand(userId, dto));
 
             return CreatedAtRoute("GetTagById", new { id = tagId }, tagId);
         }
@@ -46,14 +49,16 @@ namespace TaskManagerAPI.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateTag(Guid id, [FromBody] UpdateTagDto dto)
         {
-            await _sender.Send(new UpdateTagCommand(id, dto));
+            var userId = User.GetUserId();
+            await _sender.Send(new UpdateTagCommand(id, userId, dto));
             return NoContent();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteTag(Guid id)
         {
-            await _sender.Send(new DeleteTagCommand(id));
+            var userId = User.GetUserId();
+            await _sender.Send(new DeleteTagCommand(id, userId));
             return NoContent();
         }
     }

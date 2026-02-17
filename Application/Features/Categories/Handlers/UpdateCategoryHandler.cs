@@ -19,7 +19,7 @@ namespace Application.Features.Categories.Handlers
 
         public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _repository.Category.GetCategoryByIdAsync(request.Id, trackChanges: true);
+            var category = await _repository.Category.GetCategoryByIdAsync(request.Id, request.UserId, trackChanges: true);
 
             if (category is null)
                 throw new CategoryNotFoundException(request.Id);

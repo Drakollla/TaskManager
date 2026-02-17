@@ -13,17 +13,18 @@ namespace Repository
 
         public void DeleteCategory(Category category) => Delete(category);
 
-        public async Task<IEnumerable<Category>> GetAllCategoriesAsync(bool trackChanges) =>
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync(string userId, bool trackChanges) =>
             await FindAll(trackChanges)
+                .Where(c=>c.UserId == userId)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
 
-        public async Task<Category?> GetCategoryByIdAsync(Guid id, bool trackChanges) =>
-            await FindByCondition(x => x.Id.Equals(id), trackChanges)
+        public async Task<Category?> GetCategoryByIdAsync(Guid id, string userId, bool trackChanges) =>
+            await FindByCondition(x => x.Id.Equals(id) && x.UserId == userId, trackChanges)
                 .SingleOrDefaultAsync();
 
-        public async Task<Category?> GetCategoryByNameAsync(string name, bool trackChanges) =>
-            await FindByCondition(c => c.Name.ToLower() == name.ToLower(), trackChanges)
+        public async Task<Category?> GetCategoryByNameAsync(string name, string userId, bool trackChanges) =>
+            await FindByCondition(c => c.Name.ToLower() == name.ToLower() && c.UserId == userId, trackChanges)
                 .SingleOrDefaultAsync();
     }
 }

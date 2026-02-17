@@ -3,5 +3,5 @@ using Shared.DTO;
 
 namespace Application.Features.Categories.Commands
 {
-    public record UpdateCategoryCommand(Guid Id, UpdateCategoryDto Dto) : IRequest<Unit>;
+    public record UpdateCategoryCommand(Guid Id, string UserId, UpdateCategoryDto Dto) : IRequest<Unit>;
 }

@@ -20,7 +20,7 @@ namespace Application.Features.Tags.Handlers
 
         public async Task<TagDto> Handle(GetTagByIdQuery request, CancellationToken cancellationToken)
         {
-            var tag = await _repository.Tag.GetTagByIdAsync(request.Id, request.TrackChanges);
+            var tag = await _repository.Tag.GetTagByIdAsync(request.Id, request.UserId, request.TrackChanges);
 
             if (tag is null)
                 throw new TagNotFoundException(request.Id);

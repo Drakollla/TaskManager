@@ -30,7 +30,7 @@ namespace TaskManager.Repository.Configuration
             builder.HasOne(t => t.User)
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(t => t.UserId).IsRequired();
         }

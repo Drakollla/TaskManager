@@ -19,7 +19,7 @@ namespace Application.Features.Categories.Handlers
 
         public async Task<IEnumerable<CategoryDto>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var categories = await _repository.Category.GetAllCategoriesAsync(request.TrackChanges);
+            var categories = await _repository.Category.GetAllCategoriesAsync(request.UserId, request.TrackChanges);
             var categoriesDto = _mapper.Map<IEnumerable<CategoryDto>>(categories);
 
             return categoriesDto;

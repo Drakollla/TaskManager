@@ -19,7 +19,7 @@ namespace Application.Features.Tags.Handlers
 
         public async Task<IEnumerable<TagDto>> Handle(GetAllTagsQuery request, CancellationToken cancellationToken)
         {
-            var tags = await _repository.Tag.GetAllTagsAsync(request.TrackChanges);
+            var tags = await _repository.Tag.GetAllTagsAsync(request.UserId, request.TrackChanges);
             var tagsDto = _mapper.Map<IEnumerable<TagDto>>(tags);
 
             return tagsDto;

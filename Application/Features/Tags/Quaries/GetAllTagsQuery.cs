@@ -3,5 +3,5 @@ using Shared.DTO;
 
 namespace Application.Features.Tags.Quaries
 {
-    public record GetAllTagsQuery(bool TrackChanges) : IRequest<IEnumerable<TagDto>>;
+    public record GetAllTagsQuery(string UserId, bool TrackChanges) : IRequest<IEnumerable<TagDto>>;
 }

@@ -13,7 +13,7 @@ namespace Application.Features.Categories.Handlers
 
         public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = await _repository.Category.GetCategoryByIdAsync(request.Id, trackChanges: false);
+            var category = await _repository.Category.GetCategoryByIdAsync(request.Id, request.UserId, trackChanges: false);
 
             if (category is null)
                 throw new CategoryNotFoundException(request.Id);

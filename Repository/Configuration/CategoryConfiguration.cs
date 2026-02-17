@@ -16,8 +16,12 @@ namespace Repository.Configuration
                 .IsRequired()
                 .HasMaxLength(60);
 
-            builder.HasIndex(c => c.Name)
-                .IsUnique();
+            builder.HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasIndex(c => new { c.Name, c.UserId }).IsUnique();
 
             builder.HasMany(c => c.Tasks)
                 .WithOne(t => t.Category)

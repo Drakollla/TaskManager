@@ -13,7 +13,7 @@ namespace Application.Features.Tags.Handlers
 
         public async Task<Unit> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _repository.Tag.GetTagByIdAsync(request.Id, trackChanges: false);
+            var tag = await _repository.Tag.GetTagByIdAsync(request.Id, request.UserId, trackChanges: false);
 
             if (tag is null)
                 throw new TagNotFoundException(request.Id);

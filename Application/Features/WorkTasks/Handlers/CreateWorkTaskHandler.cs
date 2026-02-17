@@ -22,7 +22,7 @@ namespace Application.Features.WorkTasks.Handlers
         {
             var dto = request.TaskDto;
 
-            var category = await _repository.Category.GetCategoryByIdAsync(dto.CategoryId, trackChanges: false);
+            var category = await _repository.Category.GetCategoryByIdAsync(dto.CategoryId, request.UserId, trackChanges: false);
 
             if (category is null)
                 throw new CategoryNotFoundException(dto.CategoryId);

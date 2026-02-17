@@ -3,5 +3,5 @@ using Shared.DTO;
 
 namespace Application.Features.Categories.Commands
 {
-    public record CreateCategoryCommand(CreateCategoryDto CreateCategoryDto) : IRequest<Guid>;
+    public record CreateCategoryCommand(string UserId, CreateCategoryDto CreateCategoryDto) : IRequest<Guid>;
 }

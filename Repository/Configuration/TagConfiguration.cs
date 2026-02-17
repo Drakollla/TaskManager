@@ -15,8 +15,12 @@ namespace Repository.Configuration
                 .IsRequired()
                 .HasMaxLength(20);
 
-            builder.HasIndex(t => t.Name)
-                .IsUnique();
+            builder.HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasIndex(c => new { c.Name, c.UserId }).IsUnique();
 
             builder.Property(t => t.ColorHex)
                 .HasMaxLength(7);

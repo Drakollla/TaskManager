@@ -13,21 +13,22 @@ namespace Repository
 
         public void DeleteTag(Tag tag) => Delete(tag);
 
-        public async Task<IEnumerable<Tag>> GetAllTagsAsync(bool trackChanges) =>
+        public async Task<IEnumerable<Tag>> GetAllTagsAsync(string userId, bool trackChanges) =>
             await FindAll(trackChanges)
+                .Where(x => x.UserId == userId)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
 
-        public async Task<Tag?> GetTagByIdAsync(Guid id, bool trackChanges) =>
-            await FindByCondition(x => x.Id.Equals(id), trackChanges)
+        public async Task<Tag?> GetTagByIdAsync(Guid id, string userId, bool trackChanges) =>
+            await FindByCondition(x => x.Id.Equals(id) && x.UserId == userId, trackChanges)
                 .SingleOrDefaultAsync();
 
         public async Task<IEnumerable<Tag>> GetTagsByIdsAsync(IEnumerable<Guid> ids, bool trackChanges) =>
             await FindByCondition(x => ids.Contains(x.Id), trackChanges)
                 .ToListAsync();
 
-        public async Task<Tag?> GetTagByNameAsync(string name, bool trackChanges) =>
-            await FindByCondition(t => t.Name.ToLower() == name.ToLower(), trackChanges)
+        public async Task<Tag?> GetTagByNameAsync(string name, string userId, bool trackChanges) =>
+            await FindByCondition(t => t.Name.ToLower() == name.ToLower() && t.UserId == userId, trackChanges)
                 .SingleOrDefaultAsync();
     }
 }

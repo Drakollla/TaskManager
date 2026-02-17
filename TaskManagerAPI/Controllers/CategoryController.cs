@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTO;
+using TaskManagerAPI.Extensions;
 
 namespace TaskManagerAPI.Controllers
 {
@@ -19,7 +20,8 @@ namespace TaskManagerAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-            var categories = await _sender.Send(new GetAllCategoriesQuery(TrackChanges: false));
+            var userId = User.GetUserId();
+            var categories = await _sender.Send(new GetAllCategoriesQuery(userId, TrackChanges: false));
 
             return Ok(categories);
         }
@@ -27,7 +29,8 @@ namespace TaskManagerAPI.Controllers
         [HttpGet("{id:guid}", Name = "CategoryById")]
         public async Task<IActionResult> GetCategory(Guid id)
         {
-            var category = await _sender.Send(new GetCategoryByIdQuery(id, TrackChanges: false));
+            var userId = User.GetUserId();
+            var category = await _sender.Send(new GetCategoryByIdQuery(id, userId, TrackChanges: false));
 
             if (category is null)
                 return NotFound();
@@ -41,7 +44,8 @@ namespace TaskManagerAPI.Controllers
             if (createCategoryDto is null)
                 return BadRequest("CategoryDto object is null");
 
-            var createdCategoryId = await _sender.Send(new CreateCategoryCommand(createCategoryDto));
+            var userId = User.GetUserId();
+            var createdCategoryId = await _sender.Send(new CreateCategoryCommand(userId, createCategoryDto));
 
             return CreatedAtRoute("CategoryById", new { id = createdCategoryId }, new { id = createdCategoryId });
         }
@@ -49,14 +53,16 @@ namespace TaskManagerAPI.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryDto dto)
         {
-            await _sender.Send(new UpdateCategoryCommand(id, dto));
+            var userId = User.GetUserId();
+            await _sender.Send(new UpdateCategoryCommand(id, userId, dto));
             return NoContent();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            await _sender.Send(new DeleteCategoryCommand(id));
+            var userId = User.GetUserId();
+            await _sender.Send(new DeleteCategoryCommand(id, userId));
             return NoContent();
         }
     }
