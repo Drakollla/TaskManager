@@ -1,8 +1,8 @@
-﻿using Application.DTO;
-using Application.Features.Categories.Queries;
+﻿using Application.Features.Categories.Queries;
 using AutoMapper;
 using Domain.Contracts;
 using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.Categories.Handlers
 {

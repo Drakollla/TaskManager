@@ -1,13 +1,15 @@
-﻿using Application.DTO;
-using Application.Features.Categories.Commands;
+﻿using Application.Features.Categories.Commands;
 using Application.Features.Categories.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTO;
 
 namespace TaskManagerAPI.Controllers
 {
     [Route("api/categories")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ISender _sender;

@@ -1,4 +1,4 @@
-﻿namespace Application.DTO
+﻿namespace Shared.DTO
 {
     public record WorkTaskDto(
         Guid Id,

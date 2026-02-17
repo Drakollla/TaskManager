@@ -26,6 +26,13 @@ namespace TaskManager.Repository.Configuration
             builder.HasMany(t => t.Tags)
                 .WithMany(tag => tag.Tasks)
                 .UsingEntity(j => j.ToTable("TaskTags"));
+
+            builder.HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property(t => t.UserId).IsRequired();
         }
     }
 }

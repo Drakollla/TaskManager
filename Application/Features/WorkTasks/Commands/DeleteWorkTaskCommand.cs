@@ -2,5 +2,5 @@
 
 namespace Application.Features.WorkTasks.Commands
 {
-    public record DeleteWorkTaskCommand(Guid Id) : IRequest<Unit>;
+    public record DeleteWorkTaskCommand(Guid Id, string UserId) : IRequest<Unit>;
 }

@@ -1,7 +1,7 @@
-﻿using Application.DTO;
-using MediatR;
+﻿using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.WorkTasks.Quaries
 {
-    public record GetWorkTaskByIdQuery(Guid Id, bool TrackChanges) : IRequest<WorkTaskDto>;
+    public record GetWorkTaskByIdQuery(Guid Id, string UserId, bool TrackChanges) : IRequest<WorkTaskDto>;
 }

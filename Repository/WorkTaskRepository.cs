@@ -15,9 +15,10 @@ namespace Repository
 
         public void DeleteTask(WorkTask task) => Delete(task);
 
-        public async Task<PagedList<WorkTask>> GetAllTasksAsync(WorkTaskParameters parameters, bool trackChanges)
+        public async Task<PagedList<WorkTask>> GetAllTasksAsync(string userId, WorkTaskParameters parameters, bool trackChanges)
         {
             var tasksQuery = FindAll(trackChanges)
+                .Where(t => t.UserId == userId)
                 .FilterWorkTasks(parameters.MinDate, parameters.MaxDate)
                 .Search(parameters.SearchTerm)
                 .Include(t => t.Category)
@@ -34,8 +35,8 @@ namespace Repository
                 .OrderBy(x => x.DueDate)
                 .ToListAsync();
 
-        public async Task<WorkTask?> GetTaskByIdAsync(Guid id, bool trackChanges) =>
-            await FindByCondition(t => t.Id.Equals(id), trackChanges)
+        public async Task<WorkTask?> GetTaskByIdAsync(Guid id, string userId, bool trackChanges) =>
+            await FindByCondition(t => t.Id.Equals(id) && t.UserId == userId, trackChanges)
                 .Include(x => x.Category)
                 .Include(x => x.Tags)
                 .AsSplitQuery()

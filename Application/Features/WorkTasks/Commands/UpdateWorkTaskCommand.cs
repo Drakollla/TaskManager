@@ -1,7 +1,7 @@
-﻿using Application.DTO;
-using MediatR;
+﻿using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.WorkTasks.Commands
 {
-    public record UpdateWorkTaskCommand(Guid Id, UpdateWorkTaskDto UpdateDto) : IRequest<Unit>;
+    public record UpdateWorkTaskCommand(Guid Id, string UserId, UpdateWorkTaskDto UpdateDto) : IRequest<Unit>;
 }

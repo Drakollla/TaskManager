@@ -1,7 +1,7 @@
-﻿using Application.DTO;
-using MediatR;
+﻿using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.WorkTasks.Commands
 {
-    public record CreateWorkTaskCommand(CreateWorkTaskDto TaskDto) : IRequest<Guid>;
+    public record CreateWorkTaskCommand(string UserId, CreateWorkTaskDto TaskDto) : IRequest<Guid>;
 }

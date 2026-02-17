@@ -22,7 +22,7 @@ namespace Application.Features.WorkTasks.Handlers
             if (request.Id != request.UpdateDto.Id)
                 throw new IdParametersBadRequestException(request.Id, request.UpdateDto.Id);
 
-            var workTaskEntity = await _repository.Task.GetTaskByIdAsync(request.Id, trackChanges: true);
+            var workTaskEntity = await _repository.Task.GetTaskByIdAsync(request.Id, request.UserId, trackChanges: true);
 
             if (workTaskEntity is null)
                 throw new TaskNotFoundException(request.Id);

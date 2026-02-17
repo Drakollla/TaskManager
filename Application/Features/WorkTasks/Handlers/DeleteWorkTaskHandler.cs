@@ -16,7 +16,7 @@ namespace Application.Features.WorkTasks.Handlers
 
         public async Task<Unit> Handle(DeleteWorkTaskCommand request, CancellationToken cancellationToken)
         {
-            var task = await _repository.Task.GetTaskByIdAsync(request.Id, trackChanges: false);
+            var task = await _repository.Task.GetTaskByIdAsync(request.Id, request.UserId, trackChanges: false);
 
             if (task is null)
                 throw new TaskNotFoundException(request.Id);

@@ -1,13 +1,15 @@
-﻿using Application.DTO;
-using Application.Features.Tags.Commands;
+﻿using Application.Features.Tags.Commands;
 using Application.Features.Tags.Quaries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTO;
 
 namespace TaskManagerAPI.Controllers
 {
     [Route("api/tags")]
     [ApiController]
+    [Authorize]
     public class TagController : ControllerBase
     {
         private readonly ISender _sender;

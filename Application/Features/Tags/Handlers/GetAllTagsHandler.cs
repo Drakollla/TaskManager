@@ -1,8 +1,8 @@
-﻿using Application.DTO;
-using Application.Features.Tags.Quaries;
+﻿using Application.Features.Tags.Quaries;
 using AutoMapper;
 using Domain.Contracts;
 using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.Tags.Handlers
 {

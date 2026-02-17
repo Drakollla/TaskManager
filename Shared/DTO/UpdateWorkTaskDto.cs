@@ -1,6 +1,6 @@
-﻿using TaskManager.Domain.Enums;
+﻿using Shared.Enums;
 
-namespace Application.DTO
+namespace Shared.DTO
 {
     public record UpdateWorkTaskDto(Guid Id,
         string Title,

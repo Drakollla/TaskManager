@@ -1,4 +1,5 @@
-﻿using TaskManager.Domain.Enums;
+﻿using Domain.Models;
+using TaskManager.Domain.Enums;
 
 namespace TaskManager.Domain.Models
 {
@@ -14,5 +15,7 @@ namespace TaskManager.Domain.Models
         public Guid CategoryId { get; set; }
         public Category? Category { get; set; }
         public ICollection<Tag>? Tags { get; set; }
+        public string UserId { get; set; }
+        public User? User { get; set; }
     }
 }

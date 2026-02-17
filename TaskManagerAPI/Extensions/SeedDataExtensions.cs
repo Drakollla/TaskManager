@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Repository;
 using TaskManager.Domain.Enums;
 using TaskManager.Domain.Models;
@@ -16,11 +18,44 @@ namespace TaskManagerAPI.Extensions
                 try
                 {
                     var context = services.GetRequiredService<AppDbContext>();
+                    var userManager = services.GetRequiredService<UserManager<User>>();
 
                     await context.Database.MigrateAsync();
 
-                    if (await context.Categories.AnyAsync())
-                        return;
+                    //var adminUser = new User
+                    //{
+                    //    UserName = "admin",
+                    //    Email = "admin@example.com",
+                    //    FirstName = "Admin",
+                    //    LastName = "User",
+                    //    EmailConfirmed = true
+                    //};
+
+                    //var result = await userManager.CreateAsync(adminUser, "Password123!");
+
+                    //if (!result.Succeeded)
+                    //    throw new Exception("Failed to create seed user: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+
+                    var adminUser = await userManager.FindByNameAsync("admin");
+
+                    if (adminUser == null)
+                    {
+                        adminUser = new User
+                        {
+                            UserName = "admin",
+                            Email = "admin@example.com",
+                            FirstName = "Admin",
+                            LastName = "User",
+                            EmailConfirmed = true
+                        };
+
+                        var result = await userManager.CreateAsync(adminUser, "Password123!");
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception("Не удалось создать админа: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                        }
+                    }
+
 
                     var workCat = new Category { Id = Guid.NewGuid(), Name = "Работа" };
                     var homeCat = new Category { Id = Guid.NewGuid(), Name = "Личное" };
@@ -49,6 +84,7 @@ namespace TaskManagerAPI.Extensions
                         Priority = Priority.High,
                         Status = WorkTaskStatus.Todo,
                         CategoryId = workCat.Id,
+                        UserId = adminUser.Id,
                         Tags = new List<Tag> { urgentTag, bugTag }
                     },
 
@@ -62,6 +98,7 @@ namespace TaskManagerAPI.Extensions
                         Priority = Priority.High,
                         Status = WorkTaskStatus.Todo,
                         CategoryId = healthCat.Id,
+                        UserId = adminUser.Id,
                         Tags = new List<Tag> { urgentTag }
                     },
 
@@ -75,7 +112,8 @@ namespace TaskManagerAPI.Extensions
                         Priority = Priority.Medium,
                         Status = WorkTaskStatus.InProgress,
                         CategoryId = workCat.Id,
-                        Tags = new List<Tag> { featureTag }
+                        Tags = new List<Tag> { featureTag },
+                        UserId = adminUser.Id
                     },
 
                     new WorkTask
@@ -88,7 +126,8 @@ namespace TaskManagerAPI.Extensions
                         Priority = Priority.Low,
                         Status = WorkTaskStatus.Todo,
                         CategoryId = homeCat.Id,
-                        Tags = new List<Tag>()
+                        Tags = new List<Tag>(),
+                        UserId = adminUser.Id
                     },
 
                     new WorkTask
@@ -101,6 +140,7 @@ namespace TaskManagerAPI.Extensions
                         Priority = Priority.Medium,
                         Status = WorkTaskStatus.Todo,
                         CategoryId = studyCat.Id,
+                        UserId = adminUser.Id,
                         Tags = new List<Tag> { ideaTag, laterTag }
                     },
 
@@ -114,7 +154,8 @@ namespace TaskManagerAPI.Extensions
                         Priority = Priority.Low,
                         Status = WorkTaskStatus.Done,
                         CategoryId = workCat.Id,
-                        Tags = new List<Tag> { featureTag }
+                        UserId = adminUser.Id,
+                        Tags = new List<Tag> { featureTag },
                     }
                 };
 

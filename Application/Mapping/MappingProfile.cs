@@ -1,5 +1,6 @@
-﻿using Application.DTO;
-using AutoMapper;
+﻿using AutoMapper;
+using Domain.Models;
+using Shared.DTO;
 using TaskManager.Domain.Models;
 
 namespace Application.Mapping
@@ -25,6 +26,8 @@ namespace Application.Mapping
             CreateMap<CreateTagDto, Tag>();
             CreateMap<Tag, TagDto>();
             CreateMap<UpdateTagDto, Tag>();
+
+            CreateMap<UserForRegistrationDto, User>();
         }
     }
 }

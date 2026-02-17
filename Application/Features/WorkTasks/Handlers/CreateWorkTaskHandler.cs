@@ -28,6 +28,7 @@ namespace Application.Features.WorkTasks.Handlers
                 throw new CategoryNotFoundException(dto.CategoryId);
 
             var taskEntity = _mapper.Map<WorkTask>(dto);
+            taskEntity.UserId = request.UserId;
 
             if (dto.TagIds != null && dto.TagIds.Any())
             {

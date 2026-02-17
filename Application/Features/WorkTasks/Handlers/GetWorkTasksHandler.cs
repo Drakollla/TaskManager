@@ -1,9 +1,9 @@
-﻿using Application.DTO;
-using Application.Features.WorkTasks.Quaries;
+﻿using Application.Features.WorkTasks.Quaries;
 using AutoMapper;
 using Domain.Contracts;
 using Domain.RequestFeatures;
 using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.WorkTasks.Handlers
 {
@@ -20,7 +20,7 @@ namespace Application.Features.WorkTasks.Handlers
 
         public async Task<(IEnumerable<WorkTaskDto> tasks, MetaData metaData)> Handle(GetWorkTasksQuery request, CancellationToken cancellationToken)
         {
-            var tasksWithMetadata = await _repository.Task.GetAllTasksAsync(request.Parameters, request.TrackChanges);
+            var tasksWithMetadata = await _repository.Task.GetAllTasksAsync(request.UserId, request.Parameters, request.TrackChanges);
             var tasksDto = _mapper.Map<IEnumerable<WorkTaskDto>>(tasksWithMetadata);
 
             return (tasksDto, tasksWithMetadata.MetaData);

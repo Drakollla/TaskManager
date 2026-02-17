@@ -1,15 +1,18 @@
-﻿using Application.DTO;
-using Application.Features.WorkTasks.Commands;
+﻿using Application.Features.WorkTasks.Commands;
 using Application.Features.WorkTasks.Quaries;
 using Domain.RequestFeatures;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTO;
 using System.Text.Json;
+using TaskManagerAPI.Extensions;
 
 namespace TaskManagerAPI.Controllers
 {
     [Route("api/tasks")]
     [ApiController]
+    [Authorize]
     public class WorkTaskController : ControllerBase
     {
         private readonly ISender _sender;
@@ -22,8 +25,9 @@ namespace TaskManagerAPI.Controllers
             if (!parameters.ValidDateRange)
                 return BadRequest("MaxDate cannot be less than MinDate");
 
-            var result = await _sender.Send(new GetWorkTasksQuery(parameters, TrackChanges: false));
-            
+            var userId = User.GetUserId();
+            var result = await _sender.Send(new GetWorkTasksQuery(userId, parameters, TrackChanges: false));
+
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(result.metaData));
 
             return Ok(result.tasks);
@@ -32,7 +36,8 @@ namespace TaskManagerAPI.Controllers
         [HttpGet("{id:guid}", Name = "GetTaskById")]
         public async Task<IActionResult> GetTask(Guid id)
         {
-            var task = await _sender.Send(new GetWorkTaskByIdQuery(id, TrackChanges: false));
+            var userId = User.GetUserId(); 
+            var task = await _sender.Send(new GetWorkTaskByIdQuery(id, userId, TrackChanges: false));
 
             return Ok(task);
         }
@@ -40,7 +45,8 @@ namespace TaskManagerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] CreateWorkTaskDto dto)
         {
-            var taskId = await _sender.Send(new CreateWorkTaskCommand(dto));
+            var userId = User.GetUserId();
+            var taskId = await _sender.Send(new CreateWorkTaskCommand(userId, dto));
 
             return CreatedAtRoute("GetTaskById", new { id = taskId }, taskId);
         }
@@ -51,7 +57,8 @@ namespace TaskManagerAPI.Controllers
             if (updateDto is null)
                 return BadRequest("UpdateDto is null");
 
-            await _sender.Send(new UpdateWorkTaskCommand(id, updateDto));
+            var userId = User.GetUserId();
+            await _sender.Send(new UpdateWorkTaskCommand(id, userId, updateDto));
 
             return NoContent();
         }
@@ -59,7 +66,8 @@ namespace TaskManagerAPI.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteTask(Guid id)
         {
-            await _sender.Send(new DeleteWorkTaskCommand(id));
+            var userId = User.GetUserId();
+            await _sender.Send(new DeleteWorkTaskCommand(id, userId));
 
             return NoContent();
         }

@@ -1,6 +1,6 @@
-﻿using TaskManager.Domain.Enums;
+﻿using Shared.Enums;
 
-namespace Application.DTO
+namespace Shared.DTO
 {
     public record CreateWorkTaskDto(
         string Title,
@@ -8,7 +8,7 @@ namespace Application.DTO
         DateTime? DueDate,
         Priority Priority,
         TaskStatus Status,
-        Guid CategoryId,     
+        Guid CategoryId,
         List<Guid> TagIds
     );
 }

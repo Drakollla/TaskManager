@@ -1,9 +1,9 @@
-﻿using Application.DTO;
-using Application.Features.WorkTasks.Quaries;
+﻿using Application.Features.WorkTasks.Quaries;
 using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using MediatR;
+using Shared.DTO;
 
 namespace Application.Features.WorkTasks.Handlers
 {
@@ -20,7 +20,7 @@ namespace Application.Features.WorkTasks.Handlers
 
         public async Task<WorkTaskDto> Handle(GetWorkTaskByIdQuery request, CancellationToken cancellationToken)
         {
-            var task = await _repository.Task.GetTaskByIdAsync(request.Id, request.TrackChanges);
+            var task = await _repository.Task.GetTaskByIdAsync(request.Id, request.UserId, request.TrackChanges);
 
             if (task is null)
                 throw new TaskNotFoundException(request.Id);
