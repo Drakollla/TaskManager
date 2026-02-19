@@ -1,6 +1,17 @@
+using Serilog;
 using TaskManagerAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/taskmanager-.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 7)         
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers();
