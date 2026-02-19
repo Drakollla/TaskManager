@@ -7,7 +7,7 @@ namespace Shared.DTO
         string? Description,
         DateTime? DueDate,
         Priority Priority,
-        TaskStatus Status,
+        WorkTaskStatus Status,
         Guid CategoryId,
         List<Guid> TagIds
     );
