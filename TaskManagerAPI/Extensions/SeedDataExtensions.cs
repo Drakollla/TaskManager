@@ -1,8 +1,8 @@
-﻿using Domain.Models;
+﻿using Domain.Enums;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using TaskManager.Domain.Enums;
 using TaskManager.Domain.Models;
 
 namespace TaskManagerAPI.Extensions
@@ -75,8 +75,8 @@ namespace TaskManagerAPI.Extensions
                             DueDate = DateTime.UtcNow.AddDays(-1),
                             Priority = Priority.High,
                             Status = WorkTaskStatus.Todo,
-                            CategoryId = workCat.Id, 
-                            UserId = adminUser.Id,   
+                            CategoryId = workCat.Id,
+                            UserId = adminUser.Id,
                             Tags = new List<Tag> { urgentTag, bugTag }
                         },
                         new WorkTask
@@ -116,7 +116,7 @@ namespace TaskManagerAPI.Extensions
                             Priority = Priority.Low,
                             Status = WorkTaskStatus.Todo,
                             CategoryId = homeCat.Id,
-                            UserId = bobUser.Id,  
+                            UserId = bobUser.Id,
                             Tags = new List<Tag>()
                         },
                         new WorkTask
@@ -129,7 +129,7 @@ namespace TaskManagerAPI.Extensions
                             Priority = Priority.Medium,
                             Status = WorkTaskStatus.Todo,
                             CategoryId = studyCat.Id,
-                            UserId = bobUser.Id,      
+                            UserId = bobUser.Id,
                             Tags = new List<Tag> { ideaTag, laterTag }
                         },
                         new WorkTask

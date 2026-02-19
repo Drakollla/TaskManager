@@ -2,11 +2,12 @@
 using Application.Features.WorkTasks.Handlers;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.Enums;
 using Domain.Exceptions;
+using Domain.Models;
 using FluentAssertions;
 using Moq;
 using Shared.DTO;
-using Shared.Enums;
 using TaskManager.Domain.Models;
 
 namespace Tests.Features.WorkTasks

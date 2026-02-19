@@ -13,7 +13,6 @@ namespace Repository
 {
     public class AuthenticationManager : IAuthenticationManager
     {
-
         private readonly UserManager<User> _userManager;
         private readonly JwtConfiguration _jwtConfiguration;
         private User? _user;

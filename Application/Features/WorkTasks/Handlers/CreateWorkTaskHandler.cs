@@ -2,8 +2,8 @@
 using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
+using Domain.Models;
 using MediatR;
-using TaskManager.Domain.Models;
 
 namespace Application.Features.WorkTasks.Handlers
 {

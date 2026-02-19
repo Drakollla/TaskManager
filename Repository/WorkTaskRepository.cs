@@ -1,8 +1,8 @@
 ﻿using Domain.Contracts;
+using Domain.Models;
 using Domain.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using Repository.Extensions;
-using TaskManager.Domain.Models;
 
 namespace Repository
 {

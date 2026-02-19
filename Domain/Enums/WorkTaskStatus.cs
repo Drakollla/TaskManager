@@ -1,4 +1,4 @@
-﻿namespace TaskManager.Domain.Enums
+﻿namespace Domain.Enums
 {
     public enum WorkTaskStatus
     {

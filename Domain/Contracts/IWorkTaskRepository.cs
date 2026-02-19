@@ -1,5 +1,5 @@
-﻿using Domain.RequestFeatures;
-using TaskManager.Domain.Models;
+﻿using Domain.Models;
+using Domain.RequestFeatures;
 
 namespace Domain.Contracts
 {

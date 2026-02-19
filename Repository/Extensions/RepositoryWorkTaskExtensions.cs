@@ -1,4 +1,4 @@
-﻿using TaskManager.Domain.Models;
+﻿using Domain.Models;
 
 namespace Repository.Extensions
 {

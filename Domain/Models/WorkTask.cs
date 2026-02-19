@@ -1,7 +1,7 @@
-﻿using Domain.Models;
-using TaskManager.Domain.Enums;
+﻿using Domain.Enums;
+using TaskManager.Domain.Models;
 
-namespace TaskManager.Domain.Models
+namespace Domain.Models
 {
     public class WorkTask
     {
