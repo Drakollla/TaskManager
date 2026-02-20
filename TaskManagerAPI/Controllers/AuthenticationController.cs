@@ -37,9 +37,17 @@ namespace TaskManagerAPI.Controllers
             if (!await _authManager.ValidateUser(user))
                 return Unauthorized();
 
-            var token = await _authManager.CreateToken();
+            var tokenDto = await _authManager.CreateToken(populateExp: true);
 
-            return Ok(new { Token = token });
+            return Ok(tokenDto);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
+        {
+            var tokenDtoToReturn = await _authManager.RefreshToken(tokenDto);
+
+            return Ok(tokenDtoToReturn);
         }
     }
 }
