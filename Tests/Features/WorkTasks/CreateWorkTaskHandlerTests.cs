@@ -91,5 +91,85 @@ namespace Tests.Features.WorkTasks
             _workTaskRepositoryMock.Verify(x => x.CreateTask(It.IsAny<WorkTask>()), Times.Never);
             _repositoryManagerMock.Verify(x => x.SaveAsync(), Times.Never);
         }
+
+        [Fact]
+        public async Task Handle_Should_AttachTags_when_TagsProvided()
+        {
+            var userId = Guid.NewGuid().ToString();
+            var categoryId = Guid.NewGuid();
+
+            var tagId1 = Guid.NewGuid();
+            var tagId2 = Guid.NewGuid();
+            var tagIds = new List<Guid>() { tagId1, tagId2 };
+
+            var existingTags = new List<Tag>
+            {
+                new Tag { Id = tagId1, Name = "Tag 1" },
+                new Tag { Id = tagId2, Name = "Tag 2" },
+            };
+
+            var dto = new CreateWorkTaskDto("Task with Tags", "", DateTime.Now, Priority.High, WorkTaskStatus.Todo, categoryId, tagIds);
+            var command = new CreateWorkTaskCommand(userId, dto);
+
+            _categoryRepositoryMock.Setup(x => x.GetCategoryByIdAsync(categoryId, userId, false))
+                .ReturnsAsync(new Category { Id = categoryId });
+
+            _tagRepositoryMock.Setup(x => x.GetTagsByIdsAsync(tagIds, false))
+                .ReturnsAsync(existingTags);
+
+            var taskEntity = new WorkTask
+            {
+                Id = new Guid(),
+                Title = dto.Title,
+                UserId = userId,
+                CategoryId = categoryId
+            };
+
+            _mapperMock.Setup(m => m.Map<WorkTask>(dto)).Returns(taskEntity);
+            _mapperMock.Setup(m => m.Map<WorkTask>(dto)).Returns(taskEntity);
+
+            await _handler.Handle(command, CancellationToken.None);
+
+            _tagRepositoryMock.Verify(x => x.GetTagsByIdsAsync(tagIds, false), Times.Once);
+
+            taskEntity.Tags.Should().NotBeNull();
+            taskEntity.Tags.Should().HaveCount(2);
+            taskEntity.Tags.Select(t => t.Id).Should().Contain(tagIds);
+
+            _workTaskRepositoryMock.Verify(x => x.CreateTask(taskEntity), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_Should_AddTags_When_TagIdsProvided()
+        {
+            var userId = Guid.NewGuid().ToString();
+            var categoryId = Guid.NewGuid();
+            var tagId = Guid.NewGuid();
+            var tagIds = new List<Guid> { tagId };
+
+            var dto = new CreateWorkTaskDto("Task with Tag", "", DateTime.Now, Priority.High, WorkTaskStatus.Todo, categoryId, tagIds);
+            var command = new CreateWorkTaskCommand(userId, dto);
+
+            _categoryRepositoryMock
+                .Setup(x => x.GetCategoryByIdAsync(categoryId, userId, false))
+                .ReturnsAsync(new Category { Id = categoryId });
+
+            var existingTags = new List<Tag> { new Tag { Id = tagId, Name = "MyTag" } };
+
+            _tagRepositoryMock
+                .Setup(x => x.GetTagsByIdsAsync(tagIds, false))
+                .ReturnsAsync(existingTags);
+
+            var taskEntity = new WorkTask { Id = Guid.NewGuid(), Title = dto.Title, UserId = userId };
+            _mapperMock.Setup(m => m.Map<WorkTask>(dto)).Returns(taskEntity);
+
+            await _handler.Handle(command, CancellationToken.None);
+
+            _tagRepositoryMock.Verify(x => x.GetTagsByIdsAsync(tagIds, false), Times.Once);
+
+            taskEntity.Tags.Should().NotBeNull();
+            taskEntity.Tags.Should().HaveCount(1);
+            taskEntity.Tags.First().Id.Should().Be(tagId);
+        }
     }
 }
