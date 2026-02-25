@@ -36,7 +36,7 @@ namespace Application.Features.WorkTasks.Handlers
             }
             else
             {
-                workTaskEntity.Tags.Clear();
+                workTaskEntity.Tags?.Clear();
             }
 
             await _repository.SaveAsync();
