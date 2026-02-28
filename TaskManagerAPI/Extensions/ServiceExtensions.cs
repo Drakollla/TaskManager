@@ -67,13 +67,14 @@ namespace TaskManagerAPI.Extensions
             .AddDefaultTokenProviders();
         }
 
-
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
             var secretKey = Environment.GetEnvironmentVariable("SECRET");
 
-            ;
+            if (string.IsNullOrEmpty(secretKey))
+                throw new ArgumentNullException("SECRET", "Environment variable 'SECRET' is not set!");
+
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

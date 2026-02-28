@@ -24,12 +24,13 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureMediatR();
 builder.Services.ConfigureValidators();
 builder.Services.ConfigureAutoMapper();
-builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<Domain.Configuration.JwtConfiguration>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.ConfigureJWT(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -40,15 +41,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("CorsPolicy");
-
 app.MapControllers();
 
-await app.SeedDataAsync();
+//await app.SeedDataAsync();
 
 app.Run();
