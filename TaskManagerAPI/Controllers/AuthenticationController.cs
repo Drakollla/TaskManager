@@ -1,6 +1,8 @@
 ﻿using Domain.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Shared.DTO;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace TaskManagerAPI.Controllers
 {
@@ -16,6 +18,7 @@ namespace TaskManagerAPI.Controllers
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("AuthRateLimitPolicy")]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
         {
             var result = await _authManager.RegisterUser(userForRegistration);
@@ -32,6 +35,7 @@ namespace TaskManagerAPI.Controllers
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("AuthRateLimitPolicy")]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
             if (!await _authManager.ValidateUser(user))

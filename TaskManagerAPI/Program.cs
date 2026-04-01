@@ -23,6 +23,7 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureMediatR();
 builder.Services.ConfigureValidators();
+builder.Services.ConfigureRateLimiting();
 builder.Services.ConfigureAutoMapper();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<Domain.Configuration.JwtConfiguration>(builder.Configuration.GetSection("JwtSettings"));
@@ -40,9 +41,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("CorsPolicy");
-
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
