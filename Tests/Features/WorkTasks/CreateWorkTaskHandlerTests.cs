@@ -114,7 +114,7 @@ namespace Tests.Features.WorkTasks
             _categoryRepositoryMock.Setup(x => x.GetCategoryByIdAsync(categoryId, userId, false))
                 .ReturnsAsync(new Category { Id = categoryId });
 
-            _tagRepositoryMock.Setup(x => x.GetTagsByIdsAsync(tagIds, false))
+            _tagRepositoryMock.Setup(x => x.GetTagsByIdsAsync(tagIds, userId, false))
                 .ReturnsAsync(existingTags);
 
             var taskEntity = new WorkTask
@@ -130,7 +130,7 @@ namespace Tests.Features.WorkTasks
 
             await _handler.Handle(command, CancellationToken.None);
 
-            _tagRepositoryMock.Verify(x => x.GetTagsByIdsAsync(tagIds, false), Times.Once);
+            _tagRepositoryMock.Verify(x => x.GetTagsByIdsAsync(tagIds, userId, false), Times.Once);
 
             taskEntity.Tags.Should().NotBeNull();
             taskEntity.Tags.Should().HaveCount(2);
@@ -157,7 +157,7 @@ namespace Tests.Features.WorkTasks
             var existingTags = new List<Tag> { new Tag { Id = tagId, Name = "MyTag" } };
 
             _tagRepositoryMock
-                .Setup(x => x.GetTagsByIdsAsync(tagIds, false))
+                .Setup(x => x.GetTagsByIdsAsync(tagIds, userId, false))
                 .ReturnsAsync(existingTags);
 
             var taskEntity = new WorkTask { Id = Guid.NewGuid(), Title = dto.Title, UserId = userId };
@@ -165,7 +165,7 @@ namespace Tests.Features.WorkTasks
 
             await _handler.Handle(command, CancellationToken.None);
 
-            _tagRepositoryMock.Verify(x => x.GetTagsByIdsAsync(tagIds, false), Times.Once);
+            _tagRepositoryMock.Verify(x => x.GetTagsByIdsAsync(tagIds, userId, false), Times.Once);
 
             taskEntity.Tags.Should().NotBeNull();
             taskEntity.Tags.Should().HaveCount(1);

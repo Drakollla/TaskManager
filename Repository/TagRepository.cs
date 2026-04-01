@@ -23,8 +23,8 @@ namespace Repository
             await FindByCondition(x => x.Id.Equals(id) && x.UserId == userId, trackChanges)
                 .SingleOrDefaultAsync();
 
-        public async Task<IEnumerable<Tag>> GetTagsByIdsAsync(IEnumerable<Guid> ids, bool trackChanges) =>
-            await FindByCondition(x => ids.Contains(x.Id), trackChanges)
+        public async Task<IEnumerable<Tag>> GetTagsByIdsAsync(IEnumerable<Guid> ids, string userId, bool trackChanges) =>
+            await FindByCondition(x => ids.Contains(x.Id) && x.UserId == userId, trackChanges)
                 .ToListAsync();
 
         public async Task<Tag?> GetTagByNameAsync(string name, string userId, bool trackChanges) =>

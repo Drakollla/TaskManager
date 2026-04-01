@@ -9,6 +9,6 @@ namespace Domain.Contracts
         Task<IEnumerable<Tag>> GetAllTagsAsync(string userId, bool trackChanges);
         Task<Tag?> GetTagByIdAsync(Guid id, string userId, bool trackChanges);
         Task<Tag?> GetTagByNameAsync(string name, string userId, bool trackChanges);
-        Task<IEnumerable<Tag>> GetTagsByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
+        Task<IEnumerable<Tag>> GetTagsByIdsAsync(IEnumerable<Guid> ids, string userId, bool trackChanges);
     }
 }

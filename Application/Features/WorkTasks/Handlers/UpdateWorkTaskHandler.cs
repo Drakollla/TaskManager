@@ -31,7 +31,7 @@ namespace Application.Features.WorkTasks.Handlers
 
             if (request.UpdateDto.TagIds != null)
             {
-                var newTags = await _repository.Tag.GetTagsByIdsAsync(request.UpdateDto.TagIds, trackChanges: false);
+                var newTags = await _repository.Tag.GetTagsByIdsAsync(request.UpdateDto.TagIds, request.UserId, trackChanges: false);
                 workTaskEntity.Tags = newTags.ToList();
             }
             else

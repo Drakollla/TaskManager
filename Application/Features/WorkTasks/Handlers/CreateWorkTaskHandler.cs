@@ -32,7 +32,7 @@ namespace Application.Features.WorkTasks.Handlers
 
             if (dto.TagIds != null && dto.TagIds.Any())
             {
-                var tags = await _repository.Tag.GetTagsByIdsAsync(dto.TagIds, trackChanges: false);
+                var tags = await _repository.Tag.GetTagsByIdsAsync(dto.TagIds, request.UserId, trackChanges: false);
 
                 taskEntity.Tags = tags.ToList();
             }

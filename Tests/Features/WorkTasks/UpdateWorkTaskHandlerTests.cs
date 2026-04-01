@@ -103,7 +103,7 @@ namespace Tests.Features.WorkTasks
 
             var tagsFromDb = new List<Tag> { new Tag { Id = newTagId, Name = "new tag" } };
 
-            _tagRepositoryMock.Setup(x => x.GetTagsByIdsAsync(updateTaskDto.TagIds, false))
+            _tagRepositoryMock.Setup(x => x.GetTagsByIdsAsync(updateTaskDto.TagIds, userId, false))
                 .ReturnsAsync(tagsFromDb);
 
             await _handler.Handle(command, CancellationToken.None);
