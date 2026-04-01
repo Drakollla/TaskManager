@@ -1,4 +1,4 @@
-﻿using Application.Features.Tags.Quaries;
+﻿using Application.Features.Tags.Queries;
 using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;

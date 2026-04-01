@@ -1,5 +1,5 @@
 ﻿using Application.Features.Tags.Commands;
-using Application.Features.Tags.Quaries;
+using Application.Features.Tags.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

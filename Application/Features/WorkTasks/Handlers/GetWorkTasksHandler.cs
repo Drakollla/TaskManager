@@ -1,4 +1,4 @@
-﻿using Application.Features.WorkTasks.Quaries;
+﻿using Application.Features.WorkTasks.Queries;
 using AutoMapper;
 using Domain.Contracts;
 using Domain.RequestFeatures;

@@ -1,5 +1,5 @@
 ﻿using Application.Features.WorkTasks.Commands;
-using Application.Features.WorkTasks.Quaries;
+using Application.Features.WorkTasks.Queries;
 using Domain.RequestFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
