@@ -73,7 +73,6 @@ namespace Repository
             };
 
             return await _userManager.CreateAsync(user, userForRegistration.Password);
-
         }
 
         public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
@@ -98,8 +97,10 @@ namespace Repository
 
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false,
-                ValidateIssuer = false,
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidAudience = _jwtConfiguration.ValidAudience,
+                ValidIssuer = _jwtConfiguration.ValidIssuer,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                 ValidateLifetime = false,
@@ -122,9 +123,7 @@ namespace Repository
             var user = await _userManager.FindByNameAsync(username);
 
             if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-            {
                 throw new RefreshTokenBadRequestException();
-            }
 
             _user = user;
 
