@@ -4,6 +4,8 @@
     {
         public DateTime? MinDate { get; set; }
         public DateTime? MaxDate { get; set; }
-        public bool ValidDateRange => MaxDate > MinDate;
+        public bool ValidDateRange => !MinDate.HasValue ||
+            !MaxDate.HasValue || 
+            MaxDate >= MinDate;
     }
 }
