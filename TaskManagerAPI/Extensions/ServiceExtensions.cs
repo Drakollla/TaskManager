@@ -14,13 +14,17 @@ namespace TaskManagerAPI.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureCors(this IServiceCollection services) =>
+        public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration) =>
            services.AddCors(options =>
            {
                options.AddPolicy("CorsPolicy", builder =>
-                   builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader());
+               {
+                   var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
+                   builder.WithOrigins(allowedOrigins)
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+               });
            });
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
@@ -55,11 +59,11 @@ namespace TaskManagerAPI.Extensions
         {
             var builder = services.AddIdentity<User, IdentityRole>(o =>
             {
+                o.Password.RequiredLength = 8;
                 o.Password.RequireDigit = true;
                 o.Password.RequireLowercase = false;
                 o.Password.RequireUppercase = false;
-                o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 6;
+                o.Password.RequireNonAlphanumeric = true;
 
                 o.User.RequireUniqueEmail = true;
             })
