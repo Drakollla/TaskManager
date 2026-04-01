@@ -50,7 +50,9 @@ namespace TaskManagerAPI.Extensions
                     break;
 
                 default:
-                    message = exception.Message;
+                    _logger.LogError(exception, "Unhandled exception occurred.");
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    message = "An unexpected error occurred. Please try again later. If the problem persists, contact support.";
                     break;
             }
 
