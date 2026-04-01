@@ -1,6 +1,6 @@
 ﻿using Domain.Contracts;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Domain.Models;
 
 namespace Repository
 {
@@ -15,7 +15,7 @@ namespace Repository
 
         public async Task<IEnumerable<Category>> GetAllCategoriesAsync(string userId, bool trackChanges) =>
             await FindAll(trackChanges)
-                .Where(c=>c.UserId == userId)
+                .Where(c => c.UserId == userId)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
 

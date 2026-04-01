@@ -1,6 +1,6 @@
 ﻿using Domain.Contracts;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Domain.Models;
 
 namespace Repository
 {

@@ -1,6 +1,4 @@
-﻿using Domain.Models;
-
-namespace TaskManager.Domain.Models
+﻿namespace Domain.Models
 {
     public class Category
     {

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Models;
 using Shared.DTO;
-using TaskManager.Domain.Models;
 
 namespace Application.Mapping
 {

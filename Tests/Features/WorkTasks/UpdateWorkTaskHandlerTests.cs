@@ -8,7 +8,6 @@ using Domain.Models;
 using FluentAssertions;
 using Moq;
 using Shared.DTO;
-using TaskManager.Domain.Models;
 
 namespace Tests.Features.WorkTasks
 {

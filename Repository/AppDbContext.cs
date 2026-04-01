@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repository.Configuration;
-using TaskManager.Domain.Models;
 using TaskManager.Repository.Configuration;
 
 namespace Repository

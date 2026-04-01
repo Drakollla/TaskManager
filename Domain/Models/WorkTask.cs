@@ -1,5 +1,4 @@
 ﻿using Domain.Enums;
-using TaskManager.Domain.Models;
 
 namespace Domain.Models
 {

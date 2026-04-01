@@ -3,7 +3,6 @@ using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using TaskManager.Domain.Models;
 
 namespace TaskManagerAPI.Extensions
 {
