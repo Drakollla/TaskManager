@@ -31,9 +31,6 @@ namespace TaskManagerAPI.Controllers
             var userId = User.GetUserId();
             var tag = await _sender.Send(new GetTagByIdQuery(id, userId, TrackChanges: false));
 
-            if (tag is null)
-                return NotFound();
-
             return Ok(tag);
         }
 
@@ -54,7 +51,7 @@ namespace TaskManagerAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteTag(Guid id)
         {
             var userId = User.GetUserId();

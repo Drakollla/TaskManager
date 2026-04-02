@@ -137,8 +137,8 @@ namespace Repository
                 ValidateLifetime = false,
             };
 
-            var tokenHendler = new JwtSecurityTokenHandler();
-            var principal = tokenHendler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
 
             if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");

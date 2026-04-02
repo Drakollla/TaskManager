@@ -32,18 +32,12 @@ namespace TaskManagerAPI.Controllers
             var userId = User.GetUserId();
             var category = await _sender.Send(new GetCategoryByIdQuery(id, userId, TrackChanges: false));
 
-            if (category is null)
-                return NotFound();
-
             return Ok(category);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
         {
-            if (createCategoryDto is null)
-                return BadRequest("CategoryDto object is null");
-
             var userId = User.GetUserId();
             var createdCategoryId = await _sender.Send(new CreateCategoryCommand(userId, createCategoryDto));
 

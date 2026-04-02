@@ -27,13 +27,10 @@ namespace Application.Features.WorkTasks.Handlers
             if (workTaskEntity is null)
                 throw new TaskNotFoundException(request.Id);
 
-            if(request.UpdateDto.CategoryId != null)
-            {
-                var category = await _repository.Category.GetCategoryByIdAsync(request.UpdateDto.CategoryId, request.UserId, trackChanges: false);
+            var category = await _repository.Category.GetCategoryByIdAsync(request.UpdateDto.CategoryId, request.UserId, trackChanges: false);
 
-                if (category is null)
-                    throw new CategoryNotFoundException(request.UpdateDto.CategoryId);
-            }
+            if (category is null)
+                throw new CategoryNotFoundException(request.UpdateDto.CategoryId);
 
             _mapper.Map(request.UpdateDto, workTaskEntity);
 
