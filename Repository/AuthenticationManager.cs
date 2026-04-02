@@ -43,7 +43,7 @@ namespace Repository
             var token = new JwtSecurityToken(
                 issuer: _jwtConfiguration.ValidIssuer,
                 audience: _jwtConfiguration.ValidAudience,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
+                expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -54,7 +54,7 @@ namespace Repository
             _user.RefreshToken = refreshToken;
 
             if (populateExp)
-                _user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+                _user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
             await _userManager.UpdateAsync(_user);
 
@@ -122,7 +122,7 @@ namespace Repository
 
             var user = await _userManager.FindByNameAsync(username);
 
-            if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                 throw new RefreshTokenBadRequestException();
 
             _user = user;

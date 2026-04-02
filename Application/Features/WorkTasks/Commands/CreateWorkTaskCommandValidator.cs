@@ -7,7 +7,7 @@ namespace Application.Features.WorkTasks.Commands
         public CreateWorkTaskCommandValidator()
         {
             RuleFor(x => x.TaskDto.Title).NotEmpty();
-            RuleFor(x => x.TaskDto.DueDate).GreaterThan(DateTime.Now);
+            RuleFor(x => x.TaskDto.DueDate).GreaterThan(DateTime.UtcNow);
         }
     }
 }

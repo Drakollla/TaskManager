@@ -25,7 +25,8 @@ namespace Repository
                 .Include(t => t.Tags)
                 .OrderBy(t => t.DueDate)
                 .ThenBy(t => t.Title)
-                .AsNoTracking();
+                .AsNoTracking()
+                .AsSingleQuery();
 
             return await tasksQuery.ToPagedListAsync(parameters.PageNumber, parameters.PageSize);
         }
