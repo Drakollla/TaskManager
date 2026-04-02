@@ -37,7 +37,7 @@ namespace TaskManagerAPI.Controllers
         [EnableRateLimiting("AuthRateLimitPolicy")]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
-            var tokenDto = _authManager.ValidateAndCreateToken(user);
+            var tokenDto = await _authManager.ValidateAndCreateToken(user);
 
             if(tokenDto == null) 
                 return Unauthorized();
@@ -46,6 +46,7 @@ namespace TaskManagerAPI.Controllers
         }
 
         [HttpPost("refresh")]
+        [EnableRateLimiting("AuthRateLimitPolicy")]
         public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
         {
             var tokenDtoToReturn = await _authManager.RefreshToken(tokenDto);

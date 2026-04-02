@@ -24,7 +24,13 @@ namespace Application.Features.Categories.Handlers
             if (category is null)
                 throw new CategoryNotFoundException(request.Id);
 
-            _mapper.Map(request.Dto, category);
+            var existingCategory = await _repository.Category.GetCategoryByNameAsync(
+                request.UpdateCategoryDto.Name, request.UserId, trackChanges: false);
+
+            if (existingCategory != null && existingCategory.Id != request.Id)
+                throw new CategoryAlreadyExistsException(request.UpdateCategoryDto.Name);
+
+            _mapper.Map(request.UpdateCategoryDto, category);
 
             await _repository.SaveAsync();
 

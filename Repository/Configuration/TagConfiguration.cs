@@ -13,7 +13,8 @@ namespace Repository.Configuration
 
             builder.Property(t => t.Name)
                 .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(20)
+                .UseCollation("Latin1_General_CI_AS");
 
             builder.HasOne(c => c.User)
                 .WithMany()

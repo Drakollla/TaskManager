@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace TaskManager.Repository.Configuration
+namespace Repository.Configuration
 {
     public class WorkTaskConfiguration : IEntityTypeConfiguration<WorkTask>
     {

@@ -58,7 +58,7 @@ namespace TaskManagerAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
             var userId = User.GetUserId();

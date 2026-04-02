@@ -22,7 +22,7 @@ namespace TaskManagerAPI.Extensions
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
+                _logger.LogError(ex, "Something went wrong: {ExceptionType}", ex.GetType().Name);
                 await HandleExceptionAsync(httpContext, ex);
             }
         }

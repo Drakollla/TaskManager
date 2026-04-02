@@ -28,7 +28,7 @@ namespace Repository
                 .ToListAsync();
 
         public async Task<Tag?> GetTagByNameAsync(string name, string userId, bool trackChanges) =>
-            await FindByCondition(t => t.Name.ToLower() == name.ToLower() && t.UserId == userId, trackChanges)
+            await FindByCondition(t => t.Name == name && t.UserId == userId, trackChanges)
                 .SingleOrDefaultAsync();
     }
 }
