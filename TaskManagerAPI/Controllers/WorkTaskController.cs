@@ -22,9 +22,6 @@ namespace TaskManagerAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTasks([FromQuery] WorkTaskParameters parameters)
         {
-            if (!parameters.ValidDateRange)
-                return BadRequest("MaxDate cannot be less than MinDate");
-
             var userId = User.GetUserId();
             var result = await _sender.Send(new GetWorkTasksQuery(userId, parameters, TrackChanges: false));
 
@@ -54,9 +51,6 @@ namespace TaskManagerAPI.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateTask(Guid id, [FromBody] UpdateWorkTaskDto updateDto)
         {
-            if (updateDto is null)
-                return BadRequest("UpdateDto is null");
-
             var userId = User.GetUserId();
             await _sender.Send(new UpdateWorkTaskCommand(id, userId, updateDto));
 

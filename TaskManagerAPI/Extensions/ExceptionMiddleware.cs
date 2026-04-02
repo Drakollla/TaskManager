@@ -32,7 +32,7 @@ namespace TaskManagerAPI.Extensions
             context.Response.ContentType = "application/json";
 
             var statusCode = (int)HttpStatusCode.InternalServerError;
-            var message = "Internal Server Error from the custom middleware.";
+            var message = "Internal Server Error.";
 
             switch (exception)
             {

@@ -6,7 +6,7 @@ namespace Repository
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        protected AppDbContext AppDbContext;
+        protected readonly AppDbContext AppDbContext;
 
         public RepositoryBase(AppDbContext appDbContext)
         {
