@@ -7,7 +7,7 @@ namespace Domain.Contracts
     {
         Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration);
         Task<bool> ValidateUser(UserForAuthenticationDto userForAuth);
-        Task<TokenDto> CreateToken(bool populateExp);
+        Task<TokenDto> CreateToken();
         Task<TokenDto> RefreshToken(TokenDto tokenDto);
     }
 }

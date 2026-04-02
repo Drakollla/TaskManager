@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Shared.DTO;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace TaskManagerAPI.Controllers
 {
@@ -41,7 +40,7 @@ namespace TaskManagerAPI.Controllers
             if (!await _authManager.ValidateUser(user))
                 return Unauthorized();
 
-            var tokenDto = await _authManager.CreateToken(populateExp: true);
+            var tokenDto = await _authManager.CreateToken();
 
             return Ok(tokenDto);
         }

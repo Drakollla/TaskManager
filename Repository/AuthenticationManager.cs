@@ -3,6 +3,7 @@ using Domain.Contracts;
 using Domain.Exceptions;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shared.DTO;
@@ -27,7 +28,7 @@ namespace Repository
         }
 
 
-        public async Task<TokenDto> CreateToken(bool populateExp)
+        public async Task<TokenDto> CreateToken()
         {
             var secretKey = Environment.GetEnvironmentVariable("SECRET");
 
@@ -51,10 +52,17 @@ namespace Repository
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
             var refreshToken = GenerateRefreshToken();
 
-            _user.RefreshToken = refreshToken;
+            var newRefreshToken = new RefreshToken
+            {
+                Token = refreshToken,
+                ExpiryTime = DateTime.UtcNow.AddDays(7),
+                AddedDate = DateTime.UtcNow,
+                IsRevoked = false,
+                UserId = _user.Id
+            };
 
-            if (populateExp)
-                _user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            _user.RefreshTokens ??= new List<RefreshToken>();
+            _user.RefreshTokens.Add(newRefreshToken);
 
             await _userManager.UpdateAsync(_user);
 
@@ -77,9 +85,11 @@ namespace Repository
 
         public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
         {
-            _user = await _userManager.FindByNameAsync(userForAuth.UserName);
+            _user = await _userManager.Users
+               .Include(u => u.RefreshTokens)
+               .SingleOrDefaultAsync(u => u.UserName == userForAuth.UserName);
 
-            return (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
+            return _user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password);
         }
 
         private string GenerateRefreshToken()
@@ -119,15 +129,23 @@ namespace Repository
         {
             var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
             var username = principal.Identity.Name;
+            var user = await _userManager.Users
+                      .Include(u => u.RefreshTokens)
+                      .SingleOrDefaultAsync(u => u.UserName == username);
 
-            var user = await _userManager.FindByNameAsync(username);
-
-            if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            if (user == null)
                 throw new RefreshTokenBadRequestException();
+
+            var existingToken = user.RefreshTokens.SingleOrDefault(r => r.Token == tokenDto.RefreshToken);
+
+            if (existingToken == null || existingToken.IsRevoked || existingToken.ExpiryTime <= DateTime.UtcNow)
+                throw new RefreshTokenBadRequestException();
+
+            existingToken.IsRevoked = true;
 
             _user = user;
 
-            return await CreateToken(populateExp: false);
+            return await CreateToken();
         }
     }
 }
