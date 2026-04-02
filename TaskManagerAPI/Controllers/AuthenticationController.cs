@@ -37,10 +37,10 @@ namespace TaskManagerAPI.Controllers
         [EnableRateLimiting("AuthRateLimitPolicy")]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
-            if (!await _authManager.ValidateUser(user))
-                return Unauthorized();
+            var tokenDto = _authManager.ValidateAndCreateToken(user);
 
-            var tokenDto = await _authManager.CreateToken();
+            if(tokenDto == null) 
+                return Unauthorized();
 
             return Ok(tokenDto);
         }

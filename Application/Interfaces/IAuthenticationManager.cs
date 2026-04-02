@@ -6,8 +6,7 @@ namespace Domain.Contracts
     public interface IAuthenticationManager
     {
         Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration);
-        Task<bool> ValidateUser(UserForAuthenticationDto userForAuth);
-        Task<TokenDto> CreateToken();
+        Task<TokenDto?> ValidateAndCreateToken(UserForAuthenticationDto userForAuth);
         Task<TokenDto> RefreshToken(TokenDto tokenDto);
     }
 }

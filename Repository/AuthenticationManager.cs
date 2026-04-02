@@ -18,7 +18,6 @@ namespace Repository
     {
         private readonly UserManager<User> _userManager;
         private readonly JwtConfiguration _jwtConfiguration;
-        private User? _user;
 
         public AuthenticationManager(UserManager<User> userManager,
              IOptions<JwtConfiguration> configuration)
@@ -27,15 +26,60 @@ namespace Repository
             _jwtConfiguration = configuration.Value;
         }
 
+        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration)
+        {
+            var user = new User
+            {
+                UserName = userForRegistration.UserName,
+                Email = userForRegistration.Email,
+                FirstName = userForRegistration.FirstName,
+                LastName = userForRegistration.LastName,
+                PhoneNumber = userForRegistration.PhoneNumber
+            };
 
-        public async Task<TokenDto> CreateToken()
+            return await _userManager.CreateAsync(user, userForRegistration.Password);
+        }
+
+        public async Task<TokenDto?> ValidateAndCreateToken(UserForAuthenticationDto userForAuth)
+        {
+            var user = await _userManager.Users.Include(u => u.RefreshTokens)
+                .SingleOrDefaultAsync(u => u.UserName == userForAuth.UserName);
+
+            if (user == null || !await _userManager.CheckPasswordAsync(user, userForAuth.Password))
+                return null;
+
+            return await CreateToken(user);
+        }
+
+        public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
+        {
+            var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+            var username = principal.Identity.Name;
+            var user = await _userManager.Users
+                      .Include(u => u.RefreshTokens)
+                      .SingleOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+                throw new RefreshTokenBadRequestException();
+
+            var existingToken = user.RefreshTokens.SingleOrDefault(r => r.Token == tokenDto.RefreshToken);
+
+            if (existingToken == null || existingToken.IsRevoked || existingToken.ExpiryTime <= DateTime.UtcNow)
+                throw new RefreshTokenBadRequestException();
+
+            existingToken.IsRevoked = true;
+
+            return await CreateToken(user);
+        }
+
+        private async Task<TokenDto> CreateToken(User user)
         {
             var secretKey = Environment.GetEnvironmentVariable("SECRET");
 
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, _user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -58,38 +102,15 @@ namespace Repository
                 ExpiryTime = DateTime.UtcNow.AddDays(7),
                 AddedDate = DateTime.UtcNow,
                 IsRevoked = false,
-                UserId = _user.Id
+                UserId = user.Id
             };
 
-            _user.RefreshTokens ??= new List<RefreshToken>();
-            _user.RefreshTokens.Add(newRefreshToken);
+            user.RefreshTokens ??= new List<RefreshToken>();
+            user.RefreshTokens.Add(newRefreshToken);
 
-            await _userManager.UpdateAsync(_user);
+            await _userManager.UpdateAsync(user);
 
             return new TokenDto(accessToken, refreshToken);
-        }
-
-        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration)
-        {
-            var user = new User
-            {
-                UserName = userForRegistration.UserName,
-                Email = userForRegistration.Email,
-                FirstName = userForRegistration.FirstName,
-                LastName = userForRegistration.LastName,
-                PhoneNumber = userForRegistration.PhoneNumber
-            };
-
-            return await _userManager.CreateAsync(user, userForRegistration.Password);
-        }
-
-        public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
-        {
-            _user = await _userManager.Users
-               .Include(u => u.RefreshTokens)
-               .SingleOrDefaultAsync(u => u.UserName == userForAuth.UserName);
-
-            return _user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password);
         }
 
         private string GenerateRefreshToken()
@@ -123,29 +144,6 @@ namespace Repository
                 throw new SecurityTokenException("Invalid token");
 
             return principal;
-        }
-
-        public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
-        {
-            var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
-            var username = principal.Identity.Name;
-            var user = await _userManager.Users
-                      .Include(u => u.RefreshTokens)
-                      .SingleOrDefaultAsync(u => u.UserName == username);
-
-            if (user == null)
-                throw new RefreshTokenBadRequestException();
-
-            var existingToken = user.RefreshTokens.SingleOrDefault(r => r.Token == tokenDto.RefreshToken);
-
-            if (existingToken == null || existingToken.IsRevoked || existingToken.ExpiryTime <= DateTime.UtcNow)
-                throw new RefreshTokenBadRequestException();
-
-            existingToken.IsRevoked = true;
-
-            _user = user;
-
-            return await CreateToken();
         }
     }
 }
