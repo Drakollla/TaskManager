@@ -1,21 +1,19 @@
 ﻿using Application.Features.Categories.Queries;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using MediatR;
 using Shared.DTO;
+using Shared.Mapping;
 
 namespace Application.Features.Categories.Handlers
 {
     public class GetCategoryByIdHandler : IRequestHandler<GetCategoryByIdQuery, CategoryDto>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public GetCategoryByIdHandler(IRepositoryManager repository, IMapper mapper)
+        public GetCategoryByIdHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
@@ -25,7 +23,7 @@ namespace Application.Features.Categories.Handlers
             if (category is null)
                 throw new CategoryNotFoundException(request.Id);
 
-            return _mapper.Map<CategoryDto>(category);
+            return CategoryMapper.ToDto(category);
         }
     }
 }

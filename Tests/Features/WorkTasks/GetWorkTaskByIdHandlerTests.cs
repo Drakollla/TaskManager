@@ -1,12 +1,10 @@
 ﻿using Application.Features.WorkTasks.Handlers;
 using Application.Features.WorkTasks.Queries;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using Domain.Models;
 using FluentAssertions;
 using Moq;
-using Shared.DTO;
 
 namespace Tests.Features.WorkTasks
 {
@@ -14,7 +12,6 @@ namespace Tests.Features.WorkTasks
     {
         private readonly Mock<IRepositoryManager> _repositoryManagerMock;
         private readonly Mock<IWorkTaskRepository> _workTaskRepositoryMock;
-        private readonly Mock<IMapper> _mapperMock;
 
         private readonly GetWorkTaskByIdHandler _handler;
 
@@ -22,12 +19,11 @@ namespace Tests.Features.WorkTasks
         {
             _repositoryManagerMock = new Mock<IRepositoryManager>();
             _workTaskRepositoryMock = new Mock<IWorkTaskRepository>();
-            _mapperMock = new Mock<IMapper>();
 
             _repositoryManagerMock.Setup(x => x.Task)
                 .Returns(_workTaskRepositoryMock.Object);
 
-            _handler = new GetWorkTaskByIdHandler(_repositoryManagerMock.Object, _mapperMock.Object);
+            _handler = new GetWorkTaskByIdHandler(_repositoryManagerMock.Object);
         }
 
         [Fact]
@@ -37,32 +33,30 @@ namespace Tests.Features.WorkTasks
             var userId = Guid.NewGuid().ToString();
             var query = new GetWorkTaskByIdQuery(taskId, userId, false);
 
-            var taskEntity = new WorkTask { Id = taskId, Title = "Db entity" };
-
-            var expectedDto = new WorkTaskDto(
-                 Id: taskId,
-                 Title: "Test Task",
-                 Description: "Test Desc",
-                 CreatedAt: DateTime.Now,
-                 DueDate: DateTime.Now.AddDays(1),
-                 Priority: "High",
-                 Status: "Todo",
-                 CategoryName: "Work",
-                 Tags: new List<TagDto>
-                 {
-                    new TagDto(Guid.NewGuid(), "Tag1", "#FF0000")
-                 });
+            var taskEntity = new WorkTask
+            {
+                Id = taskId,
+                Title = "Test Task",
+                Description = "Test Desc",
+                CreatedAt = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(1),
+                Priority = Domain.Enums.Priority.High,
+                Status = Domain.Enums.WorkTaskStatus.Todo,
+                Category = new Category { Name = "Work" },
+                Tags = new List<Tag>
+                {
+                    new Tag { Id = Guid.NewGuid(), Name = "Tag1", ColorHex = "#FF0000" }
+                }
+            };
 
             _workTaskRepositoryMock.Setup(x => x.GetTaskByIdAsync(taskId, userId, false))
                 .ReturnsAsync(taskEntity);
 
-            _mapperMock.Setup(x => x.Map<WorkTaskDto>(taskEntity))
-                .Returns(expectedDto);
-
             var result = await _handler.Handle(query, CancellationToken.None);
 
             result.Should().NotBeNull();
-            result.Should().Be(expectedDto);
+            result.Id.Should().Be(taskId);
+            result.Title.Should().Be("Test Task");
         }
 
         [Fact]

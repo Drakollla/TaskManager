@@ -1,27 +1,25 @@
 ﻿using Application.Features.WorkTasks.Queries;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.RequestFeatures;
 using MediatR;
 using Shared.DTO;
+using Shared.Mapping;
 
 namespace Application.Features.WorkTasks.Handlers
 {
     public class GetWorkTasksHandler : IRequestHandler<GetWorkTasksQuery, (IEnumerable<WorkTaskDto> tasks, MetaData metaData)>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public GetWorkTasksHandler(IRepositoryManager repository, IMapper mapper)
+        public GetWorkTasksHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<(IEnumerable<WorkTaskDto> tasks, MetaData metaData)> Handle(GetWorkTasksQuery request, CancellationToken cancellationToken)
         {
             var tasksWithMetadata = await _repository.Task.GetAllTasksAsync(request.UserId, request.Parameters, request.TrackChanges);
-            var tasksDto = _mapper.Map<IEnumerable<WorkTaskDto>>(tasksWithMetadata);
+            var tasksDto = WorkTaskMapper.ToDto(tasksWithMetadata);
 
             return (tasksDto, tasksWithMetadata.MetaData);
         }

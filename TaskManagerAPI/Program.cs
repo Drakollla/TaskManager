@@ -24,7 +24,6 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureMediatR();
 builder.Services.ConfigureValidators();
 builder.Services.ConfigureRateLimiting();
-builder.Services.ConfigureAutoMapper();
 builder.Services.ConfigureIdentity();
 builder.Services.Configure<Domain.Configuration.JwtConfiguration>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.ConfigureJWT(builder.Configuration);

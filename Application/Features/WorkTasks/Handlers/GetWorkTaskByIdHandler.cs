@@ -1,21 +1,19 @@
 ﻿using Application.Features.WorkTasks.Queries;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using MediatR;
 using Shared.DTO;
+using Shared.Mapping;
 
 namespace Application.Features.WorkTasks.Handlers
 {
     public class GetWorkTaskByIdHandler : IRequestHandler<GetWorkTaskByIdQuery, WorkTaskDto>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public GetWorkTaskByIdHandler(IRepositoryManager repository, IMapper mapper)
+        public GetWorkTaskByIdHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<WorkTaskDto> Handle(GetWorkTaskByIdQuery request, CancellationToken cancellationToken)
@@ -25,9 +23,7 @@ namespace Application.Features.WorkTasks.Handlers
             if (task is null)
                 throw new TaskNotFoundException(request.Id);
 
-            var dto = _mapper.Map<WorkTaskDto>(task);
-
-            return dto;
+            return WorkTaskMapper.ToDto(task);
         }
     }
 }

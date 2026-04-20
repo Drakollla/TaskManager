@@ -1,6 +1,5 @@
 ﻿using Application.Features.WorkTasks.Commands;
 using Application.Features.WorkTasks.Handlers;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Enums;
 using Domain.Exceptions;
@@ -16,7 +15,7 @@ namespace Tests.Features.WorkTasks
         private readonly Mock<IRepositoryManager> _repositoryManagerMock;
         private readonly Mock<IWorkTaskRepository> _workTaskRepositoryMock;
         private readonly Mock<ITagRepository> _tagRepositoryMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<ICategoryRepository> _categoryRepositoryMock;
 
         private readonly UpdateWorkTaskHandler _handler;
 
@@ -25,7 +24,7 @@ namespace Tests.Features.WorkTasks
             _repositoryManagerMock = new Mock<IRepositoryManager>();
             _workTaskRepositoryMock = new Mock<IWorkTaskRepository>();
             _tagRepositoryMock = new Mock<ITagRepository>();
-            _mapperMock = new Mock<IMapper>();
+            _categoryRepositoryMock = new Mock<ICategoryRepository>();
 
             _repositoryManagerMock.Setup(x => x.Task)
                 .Returns(_workTaskRepositoryMock.Object);
@@ -33,7 +32,10 @@ namespace Tests.Features.WorkTasks
             _repositoryManagerMock.SetupGet(x => x.Tag)
                 .Returns(_tagRepositoryMock.Object);
 
-            _handler = new UpdateWorkTaskHandler(_repositoryManagerMock.Object, _mapperMock.Object);
+            _repositoryManagerMock.SetupGet(x => x.Category)
+                .Returns(_categoryRepositoryMock.Object);
+
+            _handler = new UpdateWorkTaskHandler(_repositoryManagerMock.Object);
         }
 
         [Fact]
@@ -41,6 +43,7 @@ namespace Tests.Features.WorkTasks
         {
             var userId = Guid.NewGuid().ToString();
             var taskId = Guid.NewGuid();
+            var categoryId = Guid.NewGuid();
 
             var updateWorkTaskDto = new UpdateWorkTaskDto(
                 Id: taskId,
@@ -49,7 +52,7 @@ namespace Tests.Features.WorkTasks
                 DueDate: DateTime.Now,
                 Priority: Priority.High,
                 Status: WorkTaskStatus.InProgress,
-                CategoryId: Guid.NewGuid(),
+                CategoryId: categoryId,
                 TagIds: null);
 
             var command = new UpdateWorkTaskCommand(taskId, userId, updateWorkTaskDto);
@@ -65,9 +68,13 @@ namespace Tests.Features.WorkTasks
             _workTaskRepositoryMock.Setup(x => x.GetTaskByIdAsync(taskId, userId, true))
                 .ReturnsAsync(existedTask);
 
+            _categoryRepositoryMock.Setup(x => x.GetCategoryByIdAsync(categoryId, userId, false))
+                .ReturnsAsync(new Category { Id = categoryId });
+
             await _handler.Handle(command, CancellationToken.None);
 
-            _mapperMock.Verify(x => x.Map(updateWorkTaskDto, existedTask), Times.Once);
+            existedTask.Title.Should().Be("New Title");
+            existedTask.Description.Should().Be("New Desc");
             _repositoryManagerMock.Verify(x => x.SaveAsync(), Times.Once);
         }
 
@@ -77,6 +84,7 @@ namespace Tests.Features.WorkTasks
             var userId = Guid.NewGuid().ToString();
             var taskId = Guid.NewGuid();
             var newTagId = Guid.NewGuid();
+            var categoryId = Guid.NewGuid();
 
             var updateTaskDto = new UpdateWorkTaskDto(
                 Id: taskId,
@@ -85,7 +93,7 @@ namespace Tests.Features.WorkTasks
                 DueDate: DateTime.Now,
                 Priority: Priority.Low,
                 Status: WorkTaskStatus.Todo,
-                CategoryId: Guid.NewGuid(),
+                CategoryId: categoryId,
                 TagIds: new List<Guid>() { newTagId });
 
             var command = new UpdateWorkTaskCommand(taskId, userId, updateTaskDto);
@@ -99,6 +107,9 @@ namespace Tests.Features.WorkTasks
 
             _workTaskRepositoryMock.Setup(x => x.GetTaskByIdAsync(taskId, userId, true))
                 .ReturnsAsync(existingEntity);
+
+            _categoryRepositoryMock.Setup(x => x.GetCategoryByIdAsync(categoryId, userId, false))
+                .ReturnsAsync(new Category { Id = categoryId });
 
             var tagsFromDb = new List<Tag> { new Tag { Id = newTagId, Name = "new tag" } };
 
@@ -135,7 +146,7 @@ namespace Tests.Features.WorkTasks
         }
 
         [Fact]
-        public async Task Handle_Should_ThrowNotFound_When_TaskDoesMotExist()
+        public async Task Handle_Should_ThrowNotFound_When_TaskDoesNotExist()
         {
             var userId = Guid.NewGuid().ToString();
             var taskId = Guid.NewGuid();

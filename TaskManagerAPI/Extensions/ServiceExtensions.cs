@@ -1,4 +1,4 @@
-﻿using Application.Behaviors;
+using Application.Behaviors;
 using Domain.Contracts;
 using Domain.Models;
 using FluentValidation;
@@ -52,9 +52,6 @@ namespace TaskManagerAPI.Extensions
         {
             services.AddValidatorsFromAssembly(typeof(Application.AssemblyReference).Assembly);
         }
-
-        public static void ConfigureAutoMapper(this IServiceCollection services) =>
-            services.AddAutoMapper(typeof(Application.Mapping.MappingProfile));
 
         public static void ConfigureIdentity(this IServiceCollection services)
         {

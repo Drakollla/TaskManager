@@ -1,20 +1,18 @@
 ﻿using Application.Features.Tags.Commands;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using MediatR;
+using Shared.Mapping;
 
 namespace Application.Features.Tags.Handlers
 {
     public class UpdateTagHandler : IRequestHandler<UpdateTagCommand, Unit>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public UpdateTagHandler(IRepositoryManager repository, IMapper mapper)
+        public UpdateTagHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
@@ -27,12 +25,12 @@ namespace Application.Features.Tags.Handlers
             if (!string.Equals(tag.Name, request.Dto.Name, StringComparison.CurrentCultureIgnoreCase))
             {
                 var duplicate = await _repository.Tag.GetTagByNameAsync(request.Dto.Name, request.UserId, trackChanges: false);
-             
+              
                 if (duplicate != null)
                     throw new TagAlreadyExistsException(request.Dto.Name);
             }
 
-            _mapper.Map(request.Dto, tag);
+            TagMapper.UpdateEntity(request.Dto, tag);
 
             await _repository.SaveAsync();
 

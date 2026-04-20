@@ -1,21 +1,19 @@
 ﻿using Application.Features.Categories.Commands;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using Domain.Models;
 using MediatR;
+using Shared.Mapping;
 
 namespace Application.Features.Categories.Handlers
 {
     public class CreateCategoryHandler : IRequestHandler<CreateCategoryCommand, Guid>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public CreateCategoryHandler(IRepositoryManager repository, IMapper mapper)
+        public CreateCategoryHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
@@ -25,7 +23,7 @@ namespace Application.Features.Categories.Handlers
             if (existingCategory != null)
                 throw new CategoryAlreadyExistsException(existingCategory.Name);
 
-            var categoryEntity = _mapper.Map<Category>(request.CreateCategoryDto);
+            var categoryEntity = CategoryMapper.ToEntity(request.CreateCategoryDto);
             categoryEntity.UserId = request.UserId;
 
             _repository.Category.CreateCategory(categoryEntity);

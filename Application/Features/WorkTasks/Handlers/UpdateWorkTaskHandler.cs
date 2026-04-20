@@ -1,20 +1,18 @@
 ﻿using Application.Features.WorkTasks.Commands;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using MediatR;
+using Shared.Mapping;
 
 namespace Application.Features.WorkTasks.Handlers
 {
     public class UpdateWorkTaskHandler : IRequestHandler<UpdateWorkTaskCommand, Unit>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public UpdateWorkTaskHandler(IRepositoryManager repository, IMapper mapper)
+        public UpdateWorkTaskHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(UpdateWorkTaskCommand request, CancellationToken cancellationToken)
@@ -32,7 +30,7 @@ namespace Application.Features.WorkTasks.Handlers
             if (category is null)
                 throw new CategoryNotFoundException(request.UpdateDto.CategoryId);
 
-            _mapper.Map(request.UpdateDto, workTaskEntity);
+            WorkTaskMapper.UpdateEntity(request.UpdateDto, workTaskEntity);
 
             if (request.UpdateDto.TagIds != null)
             {

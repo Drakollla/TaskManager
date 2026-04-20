@@ -1,21 +1,19 @@
 ﻿using Application.Features.Tags.Commands;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using Domain.Models;
 using MediatR;
+using Shared.Mapping;
 
 namespace Application.Features.Tags.Handlers
 {
     public class CreateTagHandler : IRequestHandler<CreateTagCommand, Guid>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public CreateTagHandler(IRepositoryManager repository, IMapper mapper)
+        public CreateTagHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<Guid> Handle(CreateTagCommand request, CancellationToken cancellationToken)
@@ -25,7 +23,7 @@ namespace Application.Features.Tags.Handlers
             if (existingTag != null)
                 throw new TagAlreadyExistsException(existingTag.Name);
 
-            var tagEntity = _mapper.Map<Tag>(request.CreateTagDto);
+            var tagEntity = TagMapper.ToEntity(request.CreateTagDto);
             tagEntity.UserId = request.UserId;
 
             _repository.Tag.CreateTag(tagEntity);

@@ -1,21 +1,19 @@
 ﻿using Application.Features.WorkTasks.Commands;
-using AutoMapper;
 using Domain.Contracts;
 using Domain.Exceptions;
 using Domain.Models;
 using MediatR;
+using Shared.Mapping;
 
 namespace Application.Features.WorkTasks.Handlers
 {
     public class CreateWorkTaskHandler : IRequestHandler<CreateWorkTaskCommand, Guid>
     {
         private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
 
-        public CreateWorkTaskHandler(IRepositoryManager repository, IMapper mapper)
+        public CreateWorkTaskHandler(IRepositoryManager repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public async Task<Guid> Handle(CreateWorkTaskCommand request, CancellationToken cancellationToken)
@@ -27,7 +25,7 @@ namespace Application.Features.WorkTasks.Handlers
             if (category is null)
                 throw new CategoryNotFoundException(dto.CategoryId);
 
-            var taskEntity = _mapper.Map<WorkTask>(dto);
+            var taskEntity = WorkTaskMapper.ToEntity(dto);
             taskEntity.UserId = request.UserId;
 
             if (dto.TagIds != null && dto.TagIds.Any())
